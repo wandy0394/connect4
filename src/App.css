@@ -14,7 +14,7 @@
   --neutral-white: #FFFFFF;
   --neutral-gray-light: #AAAAAA; 
   --neutral-gray-dark: #444444; 
-  --font-family: Courier, monospace
+  --font-family: "Monaco", monospace
 }
 
 body {
@@ -27,7 +27,7 @@ body {
   height:100vh;
   background-color:var(--base-light);
   display:grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 2fr 3fr 2fr;
 }
 
 .column {
@@ -59,4 +59,22 @@ body {
   background-color: var(--base-color);
   border-radius: 3rem 3rem 0 0;
   bottom:0
+}
+
+.turn-card {
+  position:absolute;
+  aspect-ratio: 6/4;
+  height:15vh;
+  border-radius: 5%;
+  background-color: red;
+  bottom:0;
+  left:50%;
+  transform:translate(-50%, -25%);
+  box-shadow: 0 1rem black;
+  border:0.325rem solid black;
+  z-index: 2;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

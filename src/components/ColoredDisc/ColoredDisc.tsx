@@ -1,11 +1,12 @@
 type Props = {
     color:string,
-    size:number
+    size:number,
+    children?:any,
     [rest:string]:any
 }
 
 export default function ColoredDisc(props:Props) {
-    const {color, size, ...rest} = props
+    const {color, size, children, ...rest} = props
 
     const discStyle = {
         backgroundColor:color,
@@ -17,6 +18,7 @@ export default function ColoredDisc(props:Props) {
     }
     return(
         <div style={discStyle} {...rest}>
+            {children}
         </div>
     )
 }

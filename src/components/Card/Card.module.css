@@ -17,13 +17,13 @@
 .title {
     font-family: var(--font-family);
     font-weight: bold;
-    font-size:x-large;
+    font-size:2rem;
 }
 
 .score {
     font-family: var(--font-family);
     font-weight: bold;
-    font-size:4rem;
+    font-size:8rem;
 }
 
 .discContainer {
