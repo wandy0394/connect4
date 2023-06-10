@@ -1,6 +1,8 @@
 * {
   box-sizing: border-box;
+  padding:0
 }
+
 :root {
   --base-color: #5C2DD5;
   --base-light: #7945FF;
@@ -12,12 +14,34 @@
   --neutral-white: #FFFFFF;
   --neutral-gray-light: #AAAAAA; 
   --neutral-gray-dark: #444444; 
-  --font-family: monospace
+  --font-family: Courier, monospace
 }
 
+body {
+  padding: 0;
+  margin: 0;
+}
 
 .base {
   width:100%;
   height:100vh;
-  background-color:var(--base-light)
+  background-color:var(--base-light);
+  display:grid;
+  grid-template-columns: 1fr 2fr 1fr;
+}
+
+.column {
+  height:100%;
+  width:100%;
+  padding:0rem 3rem
+}
+
+.column-left {
+  display:flex;
+  justify-content:end;
+}
+
+.column-right {
+  display:flex;
+  justify-content:start;
 }
