@@ -1,0 +1,17 @@
+.menuButton {
+
+    border-radius:1.75rem;
+    background-color:var(--primary-color);
+    color:white;
+    font-family: var(--font-family);
+    font-weight: bold;
+    font-size: 2rem;
+    text-align: center;
+    width: fit-content;
+    padding: 0.5rem 1rem
+}
+
+.menuButton:hover{
+    background-color:var(--primary-hover);
+    cursor: pointer
+}

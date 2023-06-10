@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import MenuButton from './components/MenuButton'
+import MenuButton from './components/MenuButton/MenuButton'
 
 function App() {
 
