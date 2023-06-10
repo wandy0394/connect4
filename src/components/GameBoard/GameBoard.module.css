@@ -1,0 +1,9 @@
+.gameboard {
+    width:100%;
+    height:60vh;
+    border:0.325rem solid black;
+    box-shadow: 0 1rem black;
+    border-radius: 3%;
+    background-color: var(--neutral-white); 
+    z-index: 1;
+}

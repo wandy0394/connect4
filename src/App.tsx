@@ -3,6 +3,7 @@ import './App.css'
 import MenuButton from './components/MenuButton/MenuButton'
 import MenuBar from './components/MenuBar/MenuBar'
 import Card from './components/Card/Card'
+import GameBoard from './components/GameBoard/GameBoard'
 
 
 const primaryColor = window.getComputedStyle(document.body).getPropertyValue('--primary-color')
@@ -19,13 +20,17 @@ function App() {
           
         </Card>
       </div>
-      <div className='column'>
+      <div className='column column-center'>
         <MenuBar/>
+        <GameBoard/>
+        {/* Empty Div added to center gameboard */}
+        <div style={{height:'10vh'}}></div>
       </div>
       <div className='column column-right'>
         <Card color={secondaryColor} title='Player 2' score={1}>
         </Card>
       </div>
+      <div className="footer"></div>
     </div>
   )
 }
