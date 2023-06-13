@@ -13,7 +13,7 @@ export default function ColoredDisc(props:Props) {
         aspectRatio:'1/1',
         borderRadius:'100%',
         border: '0.3rem solid black',
-        boxShadow:'0px 0.3rem black',
+        boxShadow:'0px 0.2rem black',
         width:size+'%'
     }
     return(

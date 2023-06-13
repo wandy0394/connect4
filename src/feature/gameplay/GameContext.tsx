@@ -5,6 +5,9 @@ type GameContextValue = {
     setBoard: React.Dispatch<React.SetStateAction<number[][]>>
     currentPlayer:Player
     playDisc:(column:number) => void
+    winner:Player 
+    resetGame: (newGame:boolean)=>void
+    score: Score
 }
 
 export const GameContext = createContext<GameContextValue | undefined>(undefined)
@@ -29,29 +32,183 @@ const INIT_BOARD = [
     new Array(6).fill(Player.NONE),
 ]
 
+const WIN_THRESH = 4
+type Score = {
+    [Player.PLAYER1]:number
+    [Player.PLAYER2]:number
+}
 export function GameProvider({children}:PropsWithChildren<any>) {
-    const [board, setBoard] = useState<number[][]>(INIT_BOARD)
+    //create 2D deep copy of initial board
+    let initialBoard = INIT_BOARD.map(b => [...b])
+
+    const [board, setBoard] = useState<number[][]>(initialBoard)
     const [currentPlayer, setCurrentPlayer] = useState<Player>(Player.PLAYER1)
+    const [score, setScore] = useState<Score>({
+        [Player.PLAYER1]:0,
+        [Player.PLAYER2]:0,
+    })
+    const [isFinished, setIsFinished] = useState<boolean>(false)
+    const [winner, setWinner] = useState<Player>(Player.NONE)
 
     function playDisc(column:number) {
-        let targetCell:number = -1
-        for (let i = 0; i < board[column].length; i++) {
-            if (board[column][i] === Player.NONE) {
-                targetCell += 1
+        console.log(INIT_BOARD)
+        if (!isFinished) {
+            let targetCell:number = -1
+            for (let i = 0; i < board[column].length; i++) {
+                if (board[column][i] === Player.NONE) {
+                    targetCell += 1
+                }
+            }
+            if (targetCell >= 0 && targetCell <= board[column].length) {
+                const newBoard = [...board]
+                newBoard[column][targetCell] = currentPlayer
+                setBoard(newBoard)
+                let candidateWinner = evaluateBoard()
+                if (candidateWinner !== Player.NONE) {
+                    endGame(candidateWinner)
+                }
+                else {
+                    nextTurn()
+                }
             }
         }
-        if (targetCell >= 0 && targetCell <= board[column].length) {
-            const newBoard = [...board]
-            newBoard[column][targetCell] = currentPlayer
-            setBoard(newBoard)
-            nextTurn()
+
+    }
+
+    function endGame(candidateWinner:Player) {
+        setWinner(candidateWinner)
+        let newScore = {...score}
+        newScore[candidateWinner as keyof Score] += 1
+        setScore(newScore)
+        setIsFinished(true)
+
+    }
+
+    function evaluateBoard():Player {
+        //check all columns
+        let count = 0
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (board[i][j] === currentPlayer) {
+                    count++
+                    if (count >= WIN_THRESH) {
+                        console.log('Winner is Player ' + currentPlayer + ' in column', i+1)
+                        return currentPlayer
+                    }
+                }
+                else {
+                    count = 0
+                }
+            }
+            count = 0
+        }
+        
+        
+        //check all rows
+        count = 0
+        for (let j = 0; j < board[j].length; j++) {
+            for (let i = 0; i < board.length; i++) {
+                if (board[i][j] === currentPlayer) {
+                    count++
+                    if (count >= WIN_THRESH) {
+                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
+                        return currentPlayer
+                    }
+                }
+                else {
+                    count = 0
+                }
+            }
+            count = 0
+        }
+        
+
+        //check downward diagonals
+
+        for (let k = board[0].length - 1; k >= 0; k--) {
+
+            for (let i = 0, j = k; i < board.length && j < board[i].length; i++, j++) {
+                if (board[i][j] === currentPlayer) {
+                    count++
+                    if (count >= WIN_THRESH) {
+                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
+                        return currentPlayer
+                    }
+                }
+                else {
+                    count = 0
+                }
+            }
+            count = 0
+        }
+        for (let k = 0; k < board.length; k++) {
+
+            for (let i = k, j = 0; i < board.length && j < board[i].length; i++, j++) {
+                if (board[i][j] === currentPlayer) {
+                    count++
+                    if (count >= WIN_THRESH) {
+                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
+                        return currentPlayer
+                    }
+                }
+                else {
+                    count = 0
+                }
+            }
+            count = 0
         }
 
+        //check upward diagonals 
+        for (let k = 0; k < board[0].length; k++) {
+            for (let i = 0, j = k; i < board.length && j >= 0; i++, j--) {
+                if (board[i][j] === currentPlayer) {
+                    count++
+                    if (count >= WIN_THRESH) {
+                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
+                        return currentPlayer
+                    }
+                }
+                else {
+                    count = 0
+                }
+            }
+            count = 0
+        }
+        for (let k = 0; k < board.length; k++) {
+            for (let i = k, j = board[i].length-1; i < board.length && j >= 0; i++, j--) {
+                if (board[i][j] === currentPlayer) {
+                    count++
+                    if (count >= WIN_THRESH) {
+                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
+                        return currentPlayer
+                    }
+                }
+                else {
+                    count = 0
+                }
+            }
+            count = 0
+        }
+
+        return Player.NONE
     }
 
     function popout(column:number) {
 
         nextTurn()
+    }
+
+    function resetGame(newGame:boolean) {
+        setBoard(initialBoard)
+        setCurrentPlayer(Player.PLAYER1)
+        if (newGame) {
+            setScore({
+                [Player.PLAYER1]:0,
+                [Player.PLAYER2]:0,
+            })
+        }
+        setWinner(Player.NONE)
+        setIsFinished(false)
     }
 
     function nextTurn() {
@@ -64,7 +221,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     }
 
     return (
-        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc}}>
+        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc, winner, resetGame, score}}>
             {children}
         </GameContext.Provider>
     )
