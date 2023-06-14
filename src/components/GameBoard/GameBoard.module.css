@@ -30,9 +30,11 @@
     cursor:pointer;
 }
 
-.chevron {
-    visibility: hidden;
-}
+
 .chevrons:hover {
     cursor:pointer;
+}
+
+.chevrons {
+    height: 4rem;
 }

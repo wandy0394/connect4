@@ -2,7 +2,9 @@ import { useGameContext } from '../../feature/gameplay/GameContext'
 import { COLOR_DICT, Player, EnumDictionary } from '../../feature/gameplay/connect4'
 import Chevron from '../Chevron/Chevron'
 import ColoredDisc from '../ColoredDisc/ColoredDisc'
+import { theme } from '../theme/theme'
 import styles from './GameBoard.module.css'
+import {useState} from 'react'
 
 type Props = {
     board:number[][]
@@ -11,8 +13,9 @@ type Props = {
 
 
 export default function GameBoard(props:Props) {
-    const {board, playDisc, currentPlayer} = useGameContext()
-
+    const {board, playDisc, currentPlayer, canPopout, popout} = useGameContext()
+    const [chevronIsVisible, setChevronIsVisible] = useState<boolean>(false)
+    const [hoveredChevronIndex, setHoveredChevronIndex] = useState<number>(-1)
     function showDiscCursor(index:number) {
         document.getElementById('col-'+index)!.style.visibility = 'visible'
     }
@@ -25,13 +28,17 @@ export default function GameBoard(props:Props) {
     }
 
     function showChevron(index:number) {
-        document.getElementById('popout-'+index)!.style.visibility = 'visible'
+        // document.getElementById('popout-'+index)!.style.visibility = 'visible'
+        setChevronIsVisible(true)
+        setHoveredChevronIndex(index)
     }
     function hideChevron(index:number) {
-        document.getElementById('popout-'+index)!.style.visibility = 'hidden'
+        // document.getElementById('popout-'+index)!.style.visibility = 'hidden'
+        setHoveredChevronIndex(-1)
+        setChevronIsVisible(false)
     }
     function handleChevronClick(index:number) {
-        //popout
+        popout(index)
     }
     return (
         <div className={styles.gameboard}>
@@ -89,7 +96,16 @@ export default function GameBoard(props:Props) {
                                 onClick={()=>handleChevronClick(index)}
                             >
                                 <div id={'popout-'+index} className={styles.chevron}>
-                                    <Chevron currentPlayer={currentPlayer}/>
+                                    {
+                                        canPopout(index) &&
+                                        <Chevron 
+                                        colour={
+                                            (chevronIsVisible && hoveredChevronIndex === index)
+                                            ? COLOR_DICT[currentPlayer] 
+                                            : theme.neutralDarkGray
+                                        }
+                                        />
+                                    }
                                 </div>
                             </div>
                         )

@@ -6,5 +6,6 @@ export const theme = {
     secondaryColorHover:window.getComputedStyle(document.body).getPropertyValue('--secondary-hover'),
     baseColor:window.getComputedStyle(document.body).getPropertyValue('--base-color'),
     baseLight:window.getComputedStyle(document.body).getPropertyValue('--base-light'),
-    white: window.getComputedStyle(document.body).getPropertyPriority('--neutral-white')
+    white: window.getComputedStyle(document.body).getPropertyValue('--neutral-white'),
+    neutralDarkGray: window.getComputedStyle(document.body).getPropertyValue('--neutral-gray-dark'),
 }
