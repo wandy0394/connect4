@@ -1,8 +1,8 @@
 import { useGameContext } from '../../feature/gameplay/GameContext'
 import { COLOR_DICT, Player, EnumDictionary } from '../../feature/gameplay/connect4'
 import ColoredDisc from '../ColoredDisc/ColoredDisc'
-import { theme } from '../theme/theme'
 import styles from './GameBoard.module.css'
+
 type Props = {
     board:number[][]
 }

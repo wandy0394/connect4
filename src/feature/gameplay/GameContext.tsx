@@ -6,8 +6,9 @@ type GameContextValue = {
     currentPlayer:Player
     playDisc:(column:number) => void
     winner:Player 
-    resetGame: (newGame:boolean)=>void
+    resetGame: (resetScore:boolean)=>void
     score: Score
+    isGameOver:boolean
 }
 
 export const GameContext = createContext<GameContextValue | undefined>(undefined)
@@ -31,7 +32,7 @@ const INIT_BOARD = [
     new Array(6).fill(Player.NONE),
     new Array(6).fill(Player.NONE),
 ]
-
+const MAX_COUNTERS = INIT_BOARD.length * INIT_BOARD[0].length
 const WIN_THRESH = 4
 type Score = {
     [Player.PLAYER1]:number
@@ -47,12 +48,12 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         [Player.PLAYER1]:0,
         [Player.PLAYER2]:0,
     })
-    const [isFinished, setIsFinished] = useState<boolean>(false)
+    const [isGameOver, setIsGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<Player>(Player.NONE)
+    const [numCounters, setNumCounters] = useState<number>(0)
 
     function playDisc(column:number) {
-        console.log(INIT_BOARD)
-        if (!isFinished) {
+        if (!isGameOver) {
             let targetCell:number = -1
             for (let i = 0; i < board[column].length; i++) {
                 if (board[column][i] === Player.NONE) {
@@ -61,10 +62,16 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             }
             if (targetCell >= 0 && targetCell <= board[column].length) {
                 const newBoard = [...board]
+                const newNumCounters = numCounters + 1
                 newBoard[column][targetCell] = currentPlayer
                 setBoard(newBoard)
+                setNumCounters(newNumCounters)
                 let candidateWinner = evaluateBoard()
                 if (candidateWinner !== Player.NONE) {
+                    endGame(candidateWinner)
+                }
+                else if (candidateWinner === Player.NONE && newNumCounters === MAX_COUNTERS) {
+                    //handle draw
                     endGame(candidateWinner)
                 }
                 else {
@@ -80,7 +87,8 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         let newScore = {...score}
         newScore[candidateWinner as keyof Score] += 1
         setScore(newScore)
-        setIsFinished(true)
+        setNumCounters(0)
+        setIsGameOver(true)
 
     }
 
@@ -198,30 +206,31 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         nextTurn()
     }
 
-    function resetGame(newGame:boolean) {
+    function resetGame(resetScore:boolean) {
         setBoard(initialBoard)
         setCurrentPlayer(Player.PLAYER1)
-        if (newGame) {
+        if (resetScore) {
             setScore({
                 [Player.PLAYER1]:0,
                 [Player.PLAYER2]:0,
             })
         }
         setWinner(Player.NONE)
-        setIsFinished(false)
+        setIsGameOver(false)
     }
 
     function nextTurn() {
-        if (currentPlayer === Player.PLAYER1) {
-            setCurrentPlayer(Player.PLAYER2)
-        }
-        else {
-            setCurrentPlayer(Player.PLAYER1)
-        }
+        currentPlayer === Player.PLAYER1 ? setCurrentPlayer(Player.PLAYER2) : setCurrentPlayer(Player.PLAYER1) 
+        // if (currentPlayer === Player.PLAYER1) {
+        //     setCurrentPlayer(Player.PLAYER2)
+        // }
+        // else {
+        //     setCurrentPlayer(Player.PLAYER1)
+        // }
     }
 
     return (
-        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc, winner, resetGame, score}}>
+        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc, winner, resetGame, score, isGameOver}}>
             {children}
         </GameContext.Provider>
     )
