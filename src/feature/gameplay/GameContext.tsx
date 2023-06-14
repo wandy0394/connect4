@@ -221,12 +221,6 @@ export function GameProvider({children}:PropsWithChildren<any>) {
 
     function nextTurn() {
         currentPlayer === Player.PLAYER1 ? setCurrentPlayer(Player.PLAYER2) : setCurrentPlayer(Player.PLAYER1) 
-        // if (currentPlayer === Player.PLAYER1) {
-        //     setCurrentPlayer(Player.PLAYER2)
-        // }
-        // else {
-        //     setCurrentPlayer(Player.PLAYER1)
-        // }
     }
 
     return (

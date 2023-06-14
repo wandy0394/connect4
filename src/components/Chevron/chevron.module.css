@@ -1,0 +1,10 @@
+
+.chevronContainer {
+    width:100%;
+}
+.chevron {
+    width:50%;
+    aspect-ratio: 1/1;
+    transform: translateX(50%) rotate(-45deg);
+    border:0;
+}

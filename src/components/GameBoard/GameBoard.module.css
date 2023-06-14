@@ -27,6 +27,9 @@
 }
 
 .column:hover {
-    /* border:2px solid blue; */
+    cursor:pointer;
+}
+
+.chevrons:hover {
     cursor:pointer;
 }
