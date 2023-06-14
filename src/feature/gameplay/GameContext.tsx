@@ -10,6 +10,7 @@ type GameContextValue = {
     score: Score
     isGameOver:boolean
     canPopout: (column:number) => boolean
+    popout: (column:number) => void
 }
 
 export const GameContext = createContext<GameContextValue | undefined>(undefined)
@@ -62,18 +63,20 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 }
             }
             if (targetCell >= 0 && targetCell <= board[column].length) {
-                const newBoard = [...board]
+                // const newBoard = [...board]
+                const newBoard = board.map(c => [...c])
+                console.log(newBoard)
                 const newNumCounters = numCounters + 1
                 newBoard[column][targetCell] = currentPlayer
                 setBoard(newBoard)
                 setNumCounters(newNumCounters)
-                let candidateWinner = evaluateBoard()
-                if (candidateWinner !== Player.NONE) {
-                    endGame(candidateWinner)
+                let currentPlayerWon = evaluateBoard(newBoard, currentPlayer)
+                if (currentPlayerWon) {
+                    endGame(currentPlayer)
                 }
-                else if (candidateWinner === Player.NONE && newNumCounters === MAX_COUNTERS) {
+                else if (!currentPlayerWon && newNumCounters === MAX_COUNTERS) {
                     //handle draw
-                    endGame(candidateWinner)
+                    endGame(Player.NONE)
                 }
                 else {
                     nextTurn()
@@ -93,16 +96,16 @@ export function GameProvider({children}:PropsWithChildren<any>) {
 
     }
 
-    function evaluateBoard():Player {
+    function evaluateBoard(board:number[][], player:Player):boolean {
         //check all columns
         let count = 0
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j] === currentPlayer) {
+                if (board[i][j] === player) {
                     count++
                     if (count >= WIN_THRESH) {
-                        console.log('Winner is Player ' + currentPlayer + ' in column', i+1)
-                        return currentPlayer
+                        console.log('Winner is Player ' + player + ' in column', i+1)
+                        return true
                     }
                 }
                 else {
@@ -117,11 +120,11 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         count = 0
         for (let j = 0; j < board[j].length; j++) {
             for (let i = 0; i < board.length; i++) {
-                if (board[i][j] === currentPlayer) {
+                if (board[i][j] === player) {
                     count++
                     if (count >= WIN_THRESH) {
-                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
-                        return currentPlayer
+                        console.log('Winner is Player ' + player + 'in row', i+1)
+                        return true
                     }
                 }
                 else {
@@ -137,11 +140,11 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         for (let k = board[0].length - 1; k >= 0; k--) {
 
             for (let i = 0, j = k; i < board.length && j < board[i].length; i++, j++) {
-                if (board[i][j] === currentPlayer) {
+                if (board[i][j] === player) {
                     count++
                     if (count >= WIN_THRESH) {
-                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
-                        return currentPlayer
+                        console.log('Winner is Player ' + player + 'in row', i+1)
+                        return true
                     }
                 }
                 else {
@@ -153,11 +156,11 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         for (let k = 0; k < board.length; k++) {
 
             for (let i = k, j = 0; i < board.length && j < board[i].length; i++, j++) {
-                if (board[i][j] === currentPlayer) {
+                if (board[i][j] === player) {
                     count++
                     if (count >= WIN_THRESH) {
-                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
-                        return currentPlayer
+                        console.log('Winner is Player ' + player + 'in row', i+1)
+                        return true
                     }
                 }
                 else {
@@ -170,11 +173,11 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         //check upward diagonals 
         for (let k = 0; k < board[0].length; k++) {
             for (let i = 0, j = k; i < board.length && j >= 0; i++, j--) {
-                if (board[i][j] === currentPlayer) {
+                if (board[i][j] === player) {
                     count++
                     if (count >= WIN_THRESH) {
-                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
-                        return currentPlayer
+                        console.log('Winner is Player ' + player + 'in row', i+1)
+                        return true
                     }
                 }
                 else {
@@ -185,11 +188,11 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         }
         for (let k = 0; k < board.length; k++) {
             for (let i = k, j = board[i].length-1; i < board.length && j >= 0; i++, j--) {
-                if (board[i][j] === currentPlayer) {
+                if (board[i][j] === player) {
                     count++
                     if (count >= WIN_THRESH) {
-                        console.log('Winner is Player ' + currentPlayer + 'in row', i+1)
-                        return currentPlayer
+                        console.log('Winner is Player ' + player + 'in row', i+1)
+                        return true
                     }
                 }
                 else {
@@ -199,12 +202,34 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             count = 0
         }
 
-        return Player.NONE
+        return false
     }
 
     function popout(column:number) {
+        if (canPopout(column)) {
 
-        nextTurn()
+            const newBoard = board.map(c=>[...c])
+            for (let i = newBoard[column].length-1; i > 0; i--) {
+                newBoard[column][i] = newBoard[column][i-1]   
+            }
+            //when popping out, there is always an empty disc
+            newBoard[column][0] = Player.NONE
+            setBoard(newBoard)
+            const newNumCounters = numCounters - 1
+            setNumCounters(newNumCounters)
+            let player1Won = evaluateBoard(newBoard, Player.PLAYER1)
+            let player2Won = evaluateBoard(newBoard, Player.PLAYER2)
+            //if popping out would result in simultanous wins, it is a draw
+            if (player1Won && player2Won) {
+                endGame(Player.NONE)
+            }
+            else if (player1Won || player2Won) {
+                endGame((player1Won) ? Player.PLAYER1 : Player.PLAYER2)
+            }
+            else {
+                nextTurn()
+            }
+        }
     }
 
     function resetGame(resetScore:boolean) {
@@ -235,7 +260,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     }
 
     return (
-        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc, winner, resetGame, score, isGameOver, canPopout}}>
+        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc, winner, resetGame, score, isGameOver, canPopout, popout}}>
             {children}
         </GameContext.Provider>
     )

@@ -13,7 +13,7 @@ type Props = {
 
 
 export default function GameBoard(props:Props) {
-    const {board, playDisc, currentPlayer, canPopout} = useGameContext()
+    const {board, playDisc, currentPlayer, canPopout, popout} = useGameContext()
     const [chevronIsVisible, setChevronIsVisible] = useState<boolean>(false)
     const [hoveredChevronIndex, setHoveredChevronIndex] = useState<number>(-1)
     function showDiscCursor(index:number) {
@@ -38,7 +38,7 @@ export default function GameBoard(props:Props) {
         setChevronIsVisible(false)
     }
     function handleChevronClick(index:number) {
-        //popout
+        popout(index)
     }
     return (
         <div className={styles.gameboard}>
