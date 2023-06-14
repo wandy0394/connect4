@@ -88,7 +88,7 @@ export default function GameBoard(props:Props) {
                                 onMouseEnter={()=>showChevron(index)}
                                 onClick={()=>handleChevronClick(index)}
                             >
-                                <div id={'popout-'+index}>
+                                <div id={'popout-'+index} className={styles.chevron}>
                                     <Chevron currentPlayer={currentPlayer}/>
                                 </div>
                             </div>
