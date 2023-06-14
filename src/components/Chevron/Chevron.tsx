@@ -10,7 +10,7 @@ export default function Chevron(props:Props) {
         <div className={styles.chevronContainer}>
             <div 
                 style={{
-                    background:`linear-gradient(to right top, ${COLOR_DICT[currentPlayer]} 50%, transparent 50%)`
+                    background:`linear-gradient(to right top, ${COLOR_DICT[currentPlayer]} 50%, transparent 50%) border-box`
                 }}
                 className={styles.chevron}
             />
