@@ -1,4 +1,3 @@
-import { COLOR_DICT, Player } from "../../feature/gameplay/connect4"
 import styles from './chevron.module.css'
 type Props = {
     colour:string

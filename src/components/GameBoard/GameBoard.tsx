@@ -6,13 +6,11 @@ import { theme } from '../theme/theme'
 import styles from './GameBoard.module.css'
 import {useState} from 'react'
 
-type Props = {
-    board:number[][]
-}
 
 
 
-export default function GameBoard(props:Props) {
+
+export default function GameBoard() {
     const {board, playDisc, currentPlayer, canPopout, popout} = useGameContext()
     const [chevronIsVisible, setChevronIsVisible] = useState<boolean>(false)
     const [hoveredChevronIndex, setHoveredChevronIndex] = useState<number>(-1)
@@ -32,7 +30,7 @@ export default function GameBoard(props:Props) {
         setChevronIsVisible(true)
         setHoveredChevronIndex(index)
     }
-    function hideChevron(index:number) {
+    function hideChevron() {
         // document.getElementById('popout-'+index)!.style.visibility = 'hidden'
         setHoveredChevronIndex(-1)
         setChevronIsVisible(false)
@@ -91,7 +89,7 @@ export default function GameBoard(props:Props) {
                         return (
                             <div 
                                 className={styles.chevrons}
-                                onMouseLeave={()=>hideChevron(index)} 
+                                onMouseLeave={()=>hideChevron()} 
                                 onMouseEnter={()=>showChevron(index)}
                                 onClick={()=>handleChevronClick(index)}
                             >

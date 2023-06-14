@@ -11,6 +11,8 @@ type GameContextValue = {
     isGameOver:boolean
     canPopout: (column:number) => boolean
     popout: (column:number) => void
+    undoMove: () => void
+    getTurnNumber: () => number
 }
 
 export const GameContext = createContext<GameContextValue | undefined>(undefined)
@@ -45,6 +47,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     let initialBoard = INIT_BOARD.map(b => [...b])
 
     const [board, setBoard] = useState<number[][]>(initialBoard)
+    const [boardHistory, setBoardHistory] = useState<number[][][]>([initialBoard])
     const [currentPlayer, setCurrentPlayer] = useState<Player>(Player.PLAYER1)
     const [score, setScore] = useState<Score>({
         [Player.PLAYER1]:0,
@@ -52,7 +55,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     })
     const [isGameOver, setIsGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<Player>(Player.NONE)
-    const [numCounters, setNumCounters] = useState<number>(0)
+    const [numDiscs, setNumDiscs] = useState<number>(0)
 
     function playDisc(column:number) {
         if (!isGameOver) {
@@ -65,11 +68,14 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             if (targetCell >= 0 && targetCell <= board[column].length) {
                 // const newBoard = [...board]
                 const newBoard = board.map(c => [...c])
-                console.log(newBoard)
-                const newNumCounters = numCounters + 1
+                const newNumCounters = numDiscs + 1
                 newBoard[column][targetCell] = currentPlayer
                 setBoard(newBoard)
-                setNumCounters(newNumCounters)
+                setNumDiscs(newNumCounters)
+                setBoardHistory([
+                    ...boardHistory,
+                    newBoard
+                ])
                 let currentPlayerWon = evaluateBoard(newBoard, currentPlayer)
                 if (currentPlayerWon) {
                     endGame(currentPlayer)
@@ -91,7 +97,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         let newScore = {...score}
         newScore[candidateWinner as keyof Score] += 1
         setScore(newScore)
-        setNumCounters(0)
+        setNumDiscs(0)
         setIsGameOver(true)
 
     }
@@ -212,11 +218,16 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             for (let i = newBoard[column].length-1; i > 0; i--) {
                 newBoard[column][i] = newBoard[column][i-1]   
             }
-            //when popping out, there is always an empty disc
+            //when popping out, there is always an empty disc. 
+            //Catches cases where we popout a column that is full and the top most disc should be empty
             newBoard[column][0] = Player.NONE
             setBoard(newBoard)
-            const newNumCounters = numCounters - 1
-            setNumCounters(newNumCounters)
+            const newNumCounters = numDiscs - 1
+            setNumDiscs(newNumCounters)
+            setBoardHistory([
+                ...boardHistory,
+                newBoard
+            ])
             let player1Won = evaluateBoard(newBoard, Player.PLAYER1)
             let player2Won = evaluateBoard(newBoard, Player.PLAYER2)
             //if popping out would result in simultanous wins, it is a draw
@@ -254,13 +265,41 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         return false
     }
 
+    function getTurnNumber():number {
+        return boardHistory.length
+    }
+
+
+    function undoMove() {
+        if (!isGameOver && boardHistory.length > 1) {
+
+            currentPlayer === Player.PLAYER1 ? setCurrentPlayer(Player.PLAYER2) : setCurrentPlayer(Player.PLAYER1) 
+            setBoard(boardHistory[boardHistory.length - 2])
+            setBoardHistory(boardHistory.filter((_, index) => index < (boardHistory.length - 1)))
+        }
+    }
 
     function nextTurn() {
         currentPlayer === Player.PLAYER1 ? setCurrentPlayer(Player.PLAYER2) : setCurrentPlayer(Player.PLAYER1) 
     }
 
     return (
-        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc, winner, resetGame, score, isGameOver, canPopout, popout}}>
+        <GameContext.Provider 
+            value={{
+                board, 
+                setBoard, 
+                currentPlayer, 
+                playDisc, 
+                winner, 
+                resetGame, 
+                score, 
+                isGameOver, 
+                canPopout, 
+                popout, 
+                undoMove, 
+                getTurnNumber
+            }}
+        >
             {children}
         </GameContext.Provider>
     )
