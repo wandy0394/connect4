@@ -1,16 +1,16 @@
 import { COLOR_DICT, Player } from "../../feature/gameplay/connect4"
 import styles from './chevron.module.css'
 type Props = {
-    currentPlayer:Player
+    colour:string
 }
 
 export default function Chevron(props:Props) {
-    const {currentPlayer} = props
+    const {colour} = props
     return (
         <div className={styles.chevronContainer}>
             <div 
                 style={{
-                    background:`linear-gradient(to right top, ${COLOR_DICT[currentPlayer]} 50%, transparent 50%) border-box`
+                    backgroundColor: colour
                 }}
                 className={styles.chevron}
             />

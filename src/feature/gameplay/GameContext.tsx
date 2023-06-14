@@ -9,6 +9,7 @@ type GameContextValue = {
     resetGame: (resetScore:boolean)=>void
     score: Score
     isGameOver:boolean
+    canPopout: (column:number) => boolean
 }
 
 export const GameContext = createContext<GameContextValue | undefined>(undefined)
@@ -219,12 +220,22 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         setIsGameOver(false)
     }
 
+    function canPopout(column:number):boolean {
+        for (let i = 0; i < board[column].length; i++) {
+            if (board[column][i] !== Player.NONE) {
+                return true
+            }
+        }
+        return false
+    }
+
+
     function nextTurn() {
         currentPlayer === Player.PLAYER1 ? setCurrentPlayer(Player.PLAYER2) : setCurrentPlayer(Player.PLAYER1) 
     }
 
     return (
-        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc, winner, resetGame, score, isGameOver}}>
+        <GameContext.Provider value={{board, setBoard, currentPlayer, playDisc, winner, resetGame, score, isGameOver, canPopout}}>
             {children}
         </GameContext.Provider>
     )
