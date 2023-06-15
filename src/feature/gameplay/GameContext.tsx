@@ -13,6 +13,7 @@ type GameContextValue = {
     popout: (column:number) => void
     undoMove: () => void
     getTurnNumber: () => number
+    findNewDiscPosition: (column:number) => number
 }
 
 export const GameContext = createContext<GameContextValue | undefined>(undefined)
@@ -59,12 +60,13 @@ export function GameProvider({children}:PropsWithChildren<any>) {
 
     function playDisc(column:number) {
         if (!isGameOver) {
-            let targetCell:number = -1
-            for (let i = 0; i < board[column].length; i++) {
-                if (board[column][i] === Player.NONE) {
-                    targetCell += 1
-                }
-            }
+            // let targetCell:number = -1
+            // for (let i = 0; i < board[column].length; i++) {
+            //     if (board[column][i] === Player.NONE) {
+            //         targetCell += 1
+            //     }
+            // }
+            let targetCell:number = findNewDiscPosition(column)
             if (targetCell >= 0 && targetCell <= board[column].length) {
                 // const newBoard = [...board]
                 const newBoard = board.map(c => [...c])
@@ -90,6 +92,18 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             }
         }
 
+    }
+
+
+    function findNewDiscPosition(column:number):number {
+        let targetCell:number = -1
+        for (let i = 0; i < board[column].length; i++) {
+            if (board[column][i] === Player.NONE) {
+                targetCell += 1
+            }
+        }
+        if (targetCell >= 0 && targetCell <= board[column].length) return targetCell
+        return -1
     }
 
     function endGame(candidateWinner:Player) {
@@ -297,7 +311,8 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 canPopout, 
                 popout, 
                 undoMove, 
-                getTurnNumber
+                getTurnNumber,
+                findNewDiscPosition
             }}
         >
             {children}

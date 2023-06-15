@@ -11,72 +11,112 @@ import {useState} from 'react'
 
 
 export default function GameBoard() {
-    const {board, playDisc, currentPlayer, canPopout, popout} = useGameContext()
+    const {board, playDisc, currentPlayer, canPopout, popout, findNewDiscPosition, isGameOver} = useGameContext()
     const [chevronIsVisible, setChevronIsVisible] = useState<boolean>(false)
     const [hoveredChevronIndex, setHoveredChevronIndex] = useState<number>(-1)
+    const [animate, setAnimate] = useState<boolean>(false)
+    const [selectedColumn, setSelectedColumn] = useState<number>(-1)
+
     function showDiscCursor(index:number) {
-        document.getElementById('col-'+index)!.style.visibility = 'visible'
+        if (!animate) setSelectedColumn(index)
     }
 
     function hideDiscCursor(index:number) {
-        document.getElementById('col-'+index)!.style.visibility = 'hidden'
+        if (!animate) setSelectedColumn(-1)
     }
     function handleColumClick(column:number) {
+        let row = findNewDiscPosition(column)
+        if (row >= 0 && !isGameOver) {
+            let discId = `disc-${column}-${row}`
+            let dropDiscId = `drop-disc-${column}`
+            let rowTop = document.getElementById(discId)?.getBoundingClientRect()
+            let discHeight = document.getElementById(dropDiscId)?.getBoundingClientRect()
+            let lowestDiscHeight = document.getElementById(`disc-0-${board[0].length-1}`)?.getBoundingClientRect()
+            if (rowTop && discHeight && lowestDiscHeight) {
+                let newTop = Math.floor(rowTop.y - discHeight.y) + 'px'
+                document.documentElement.style.setProperty('--disc-end-height', newTop) 
+                
+                let newAnimationTime = Math.floor(300 * (rowTop.y/ lowestDiscHeight.y )) + 'ms'
+                document.documentElement.style.setProperty('--animation-time', newAnimationTime) 
+                console.log(newAnimationTime)
+                // console.log(document.documentElement.style.getPropertyValue('--disc-end-height'))
+                setSelectedColumn(column)
+                setAnimate(true)
+            }
+        }
+    }
+
+    function resolveAnimation(column:number) {
         playDisc(column)
+        setAnimate(false)
+        setSelectedColumn(-1)
     }
 
     function showChevron(index:number) {
-        // document.getElementById('popout-'+index)!.style.visibility = 'visible'
         setChevronIsVisible(true)
         setHoveredChevronIndex(index)
     }
     function hideChevron() {
-        // document.getElementById('popout-'+index)!.style.visibility = 'hidden'
         setHoveredChevronIndex(-1)
         setChevronIsVisible(false)
     }
     function handleChevronClick(index:number) {
-        popout(index)
+        if (!isGameOver) popout(index)
     }
     return (
         <div className={styles['gameboard-container']}>
+            <div style ={{
+                display:'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)'
+            }}>
+            {
+                board.map((_, index) => {
+                    return (
+                        <div 
+                            id={'drop-disc-' + index} 
+                            style={{
+                                height:'10px',
+                                visibility: (selectedColumn === index) ? 'visible':'hidden',
+                            }}
+                        >
+                        <div 
+                            // className={styles['dropping-disc']}
+                            className={`
+                                ${styles['dropping-disc']} 
+                                ${(animate && selectedColumn === index) 
+                                    && styles['start-drop-animation']}
+                            `}
+                            onAnimationEnd={()=>resolveAnimation(index)}
+                        >
+                            <ColoredDisc color={COLOR_DICT[currentPlayer]} size={100}/>
+                        </div>
+                    </div>
+                    )
+                })
+            }
+            </div>
             <div className={styles.gameboard}>
             <>
                 {
-                    board.map((col, index)=>{
+                    board.map((col, colIndex)=>{
                         return (
                             <div 
+                                id={'column-container-'+colIndex}
                                 className={styles.column} 
-                                onMouseLeave={()=>hideDiscCursor(index)} 
-                                onMouseEnter={()=>showDiscCursor(index)}
-                                onClick={()=>handleColumClick(index)}
+                                onMouseLeave={()=>hideDiscCursor(colIndex)} 
+                                onMouseEnter={()=>showDiscCursor(colIndex)}
+                                onClick={()=>handleColumClick(colIndex)}
                             >
-                                <div 
-                                    id={'col-' + index} 
-                                    style={{
-                                        height:0,
-                                        visibility:'hidden',
-                                    }}
-                                >
-                                    <div 
-                                        style={{
-                                            transform:'scale(80%) translateY(-40%)',
-                                            position:'relative',
-                                            zIndex:-1
-                                        }}
-                                    >
-                                        <ColoredDisc color={COLOR_DICT[currentPlayer]} size={100}/>
-                                    </div>
-                                </div>
                                 {
-                                    col.map(row=> {
+                                    col.map((row, rowIndex)=> {
                                         
                                         return (
-                                            <div className={styles['disc-container']}>
+                                            <div  className={styles['disc-container']}>
                                                 <div className={styles['disc-hole']}>
                                                     <div className={styles['disc-shadow']}>
 
                                                         <ColoredDisc 
+                                                            id={`disc-${colIndex}-${rowIndex}`}
                                                             extraStyle={{
                                                                 visibility: row != Player.NONE ? 'visible' : 'hidden',
                                                                 transform:'translateY(-15%)'
@@ -111,11 +151,11 @@ export default function GameBoard() {
                                     {
                                         canPopout(index) &&
                                         <Chevron 
-                                        colour={
-                                            (chevronIsVisible && hoveredChevronIndex === index)
-                                            ? COLOR_DICT[currentPlayer] 
-                                            : theme.neutralDarkGray
-                                        }
+                                            colour={
+                                                (chevronIsVisible && hoveredChevronIndex === index)
+                                                ? COLOR_DICT[currentPlayer] 
+                                                : theme.neutralDarkGray
+                                            }
                                         />
                                     }
                                 </div>

@@ -18,7 +18,7 @@
 
 .disc-container {
     overflow:hidden;
-    border:1px solid red;
+    /* border:1px solid red; */
 }
 
 .disc-hole {
@@ -46,8 +46,9 @@
 }
 
 .column {
-    border:1px solid blue;
+    /* border:1px solid blue; */
     width:100%;
+    /* background-color: var(--neutral-white); */
 }
 
 .column:hover {
@@ -60,6 +61,27 @@
 }
 
 .chevrons {
-    height: 4rem;
+    height: 2vh;
     background-color: var(--neutral-white);
+}
+.dropping-disc {
+    transform: scale(80%);
+    position: relative;
+    z-index: -1;
+    top:var(--disc-start-height);
+    will-change: top;
+}
+
+.start-drop-animation {
+    animation: drop ease-in var(--animation-time);
+    animation-delay: 10ms;
+    animation-fill-mode: forwards;
+}
+@keyframes drop {
+    from {
+        top:var(--disc-start-height);
+    }
+    to {
+        top: var(--disc-end-height);
+    }
 }
