@@ -39,7 +39,8 @@ export default function GameBoard() {
         popout(index)
     }
     return (
-        <div className={styles.gameboard}>
+        <div className={styles['gameboard-container']}>
+            <div className={styles.gameboard}>
             <>
                 {
                     board.map((col, index)=>{
@@ -55,12 +56,13 @@ export default function GameBoard() {
                                     style={{
                                         height:0,
                                         visibility:'hidden',
-                                        padding:'10%'
                                     }}
                                 >
                                     <div 
                                         style={{
-                                            transform:'translateY(-100%)'
+                                            transform:'scale(80%) translateY(-40%)',
+                                            position:'relative',
+                                            zIndex:-1
                                         }}
                                     >
                                         <ColoredDisc color={COLOR_DICT[currentPlayer]} size={100}/>
@@ -70,8 +72,20 @@ export default function GameBoard() {
                                     col.map(row=> {
                                         
                                         return (
-                                            <div className={styles.position}>
-                                                <ColoredDisc size={100} color={COLOR_DICT[row as keyof EnumDictionary<Player, string>]}/>
+                                            <div className={styles['disc-container']}>
+                                                <div className={styles['disc-hole']}>
+                                                    <div className={styles['disc-shadow']}>
+
+                                                        <ColoredDisc 
+                                                            extraStyle={{
+                                                                visibility: row != Player.NONE ? 'visible' : 'hidden',
+                                                                transform:'translateY(-15%)'
+                                                            }} 
+                                                            size={100} 
+                                                            color={COLOR_DICT[row as keyof EnumDictionary<Player, string>]}
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
                                         )
                                     })
@@ -110,6 +124,7 @@ export default function GameBoard() {
                     })
                 }
             </>
+            </div>
         </div>
     )
 }

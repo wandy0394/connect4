@@ -11,7 +11,7 @@ export type EnumDictionary<T extends string | number, U> = {
 }
 
 export const COLOR_DICT:EnumDictionary<Player, string> = {
-    [Player.NONE]: theme.baseLight,
+    [Player.NONE]: theme.neutralDarkGray,
     [Player.PLAYER1]: theme.primaryColor,
     [Player.PLAYER2]: theme.secondaryColor,
 }
