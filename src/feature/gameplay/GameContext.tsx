@@ -113,7 +113,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         setScore(newScore)
         setNumDiscs(0)
         setIsGameOver(true)
-
+        setBoardHistory([INIT_BOARD.map(b => [...b])])
     }
 
     function evaluateBoard(board:number[][], player:Player):boolean {
@@ -258,7 +258,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     }
 
     function resetGame(resetScore:boolean) {
-        setBoard(initialBoard)
+        setBoard(INIT_BOARD.map(b => [...b]))
         setCurrentPlayer(Player.PLAYER1)
         if (resetScore) {
             setScore({
@@ -268,6 +268,8 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         }
         setWinner(Player.NONE)
         setIsGameOver(false)
+        setBoardHistory([INIT_BOARD.map(b => [...b])])
+        setNumDiscs(0)
     }
 
     function canPopout(column:number):boolean {

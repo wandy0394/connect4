@@ -30,7 +30,7 @@
     z-index: 4;
     border-radius: 100%;
     transform:scale(80%);
-    box-shadow: 0 0 0 500px var(--neutral-white);
+    box-shadow: 0 0 0 75px var(--neutral-white);
     overflow:hidden;
     width:100%;
 }
@@ -67,9 +67,9 @@
 .dropping-disc {
     transform: scale(80%);
     position: relative;
-    z-index: -1;
-    top:var(--disc-start-height);
-    will-change: top;
+    z-index: 1;
+    /* top:var(--disc-start-height); */
+    will-change: transform;
 }
 
 .start-drop-animation {
@@ -79,9 +79,11 @@
 }
 @keyframes drop {
     from {
-        top:var(--disc-start-height);
+        /* top:var(--disc-start-height); */
+        transform:scale(80%)
     }
     to {
-        top: var(--disc-end-height);
+        /* top: var(--disc-end-height); */
+        transform: scale(80%) translateY(var(--disc-end-height));
     }
 }
