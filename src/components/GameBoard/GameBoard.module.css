@@ -73,7 +73,7 @@
 }
 
 .start-drop-animation {
-    animation: drop ease-in var(--animation-time);
+    animation: drop ease-in-out var(--animation-time);
     animation-delay: 10ms;
     animation-fill-mode: forwards;
 }

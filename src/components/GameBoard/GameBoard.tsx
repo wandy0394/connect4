@@ -67,7 +67,7 @@ export default function GameBoard() {
             <div style ={{
                 display:'grid',
                 gridTemplateColumns: 'repeat(7, 1fr)',
-                border:'1px solid red',
+                // border:'1px solid red',
                 paddingLeft:'2%',
                 paddingRight:'2%',
                 width:'100%',
