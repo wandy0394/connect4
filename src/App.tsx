@@ -29,7 +29,6 @@ function App() {
         <Card color={theme.secondaryColor} title='PLAYER 2' score={score[Player.PLAYER2]}/>
       </div>
       <TurnCard/>
-
       <div className="footer"></div>
     </div> 
   )

@@ -1,8 +1,8 @@
 .dropping-disc {
+
     transform: scale(80%);
     position: relative;
     z-index: 1;
-    /* top:var(--disc-start-height); */
     will-change: transform;
 }
 
@@ -13,11 +13,9 @@
 }
 @keyframes drop {
     from {
-        /* top:var(--disc-start-height); */
         transform:scale(80%)
     }
     to {
-        /* top: var(--disc-end-height); */
         transform: scale(80%) translateY(var(--disc-end-height));
     }
 }

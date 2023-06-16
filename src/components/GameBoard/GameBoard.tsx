@@ -25,11 +25,8 @@ export default function GameBoard() {
         let row = findNewDiscPosition(column)
         if (row >= 0 && !isGameOver && !animate) {
             //calculate height to drop disc and animation time
-            let targetDiscId = `cell-${column}-${row}`
-            let dropDiscId = `drop-disc-zone`
-            // let dropDiscId = `drop-disc-${column}`
-            let targetRow = document.getElementById(targetDiscId)?.getBoundingClientRect()
-            let discHeight = document.getElementById(dropDiscId)?.getBoundingClientRect()
+            let targetRow = document.getElementById(`cell-${column}-${row}`)?.getBoundingClientRect()
+            let discHeight = document.getElementById(`drop-disc-zone`)?.getBoundingClientRect()
             //obtain height of bottom row of cells
             let lowestDiscHeight = document.getElementById(`cell-0-${board[0].length-1}`)?.getBoundingClientRect()
 
@@ -60,7 +57,6 @@ export default function GameBoard() {
                 selectedColumn={selectedColumn}
             />
             <div className={styles['gameboard-container']}>
-
                 <div className={styles.gameboard}>
                 <>
                     {
@@ -96,6 +92,5 @@ export default function GameBoard() {
                 </div>
             </div>
         </>
-
     )
 }

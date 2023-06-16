@@ -16,9 +16,7 @@
   --neutral-gray-light: #AAAAAA; 
   --neutral-gray-dark: #444444; 
   --font-family: "Monaco", monospace;
-  --triangle-width: calc(100vw / 40);
-  --triangle-height: calc(100vh / 40);
-  --disc-start-height:-100%;
+
   --disc-end-height:500px;
   --animation-time: 300ms;
 }
