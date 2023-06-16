@@ -10,7 +10,6 @@ export default function ColoredDisc(props:Props) {
     const {color, size, children, extraStyle={}, ...rest} = props
 
     const discStyle = {
-        position:'relative',
         backgroundColor:color,
         aspectRatio:'1/1',
         borderRadius:'100%',

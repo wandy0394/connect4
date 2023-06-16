@@ -15,17 +15,16 @@ export default function GameBoardCell(props:Props) {
     return (
         <div {...rest} className={styles['disc-container']}>
             <div className={styles['disc-hole']}>
-                <div className={styles['disc-shadow']}>
-
-                    <ColoredDisc 
-                        extraStyle={{
-                            visibility: cellValue != Player.NONE ? 'visible' : 'hidden',
-                            transform:'translateY(-15%)'
-                        }} 
-                        size={100} 
-                        color={COLOR_DICT[cellValue as keyof EnumDictionary<Player, string>]}
-                    />
-                </div>
+                <div className={styles['disc-shadow']}/>
+                <ColoredDisc 
+                    extraStyle={{
+                        visibility: cellValue != Player.NONE ? 'visible' : 'hidden',
+                        position:'absolute',
+                        zIndex:3,
+                    }} 
+                    size={100} 
+                    color={COLOR_DICT[cellValue as keyof EnumDictionary<Player, string>]}
+                />
             </div>
         </div>
     )
