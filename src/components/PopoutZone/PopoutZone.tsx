@@ -2,11 +2,11 @@ import { useGameContext } from "../../feature/gameplay/GameContext"
 import {useState} from 'react'
 import styles from './PopoutZone.module.css'
 import Chevron from "../Chevron/Chevron"
-import { COLOR_DICT } from "../../feature/gameplay/connect4"
+import { COLOR_DICT, canPopout } from "../../feature/gameplay/connect4"
 import { theme } from "../theme/theme"
 
 export default function PopoutZone() {
-    const {isGameOver, popout, canPopout, board, currentPlayer} = useGameContext()
+    const {isGameOver, popout, board, currentPlayer} = useGameContext()
     const [hoveredChevronIndex, setHoveredChevronIndex] = useState<number>(-1)
     const [chevronIsVisible, setChevronIsVisible] = useState<boolean>(false)
 
@@ -35,7 +35,7 @@ export default function PopoutZone() {
                         >
                             <div id={'popout-'+index} className={styles.chevron}>
                                 {
-                                    canPopout(index) &&
+                                    canPopout(board, index) &&
                                     <Chevron 
                                         colour={
                                             (chevronIsVisible && hoveredChevronIndex === index)
