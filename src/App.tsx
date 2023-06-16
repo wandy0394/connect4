@@ -1,4 +1,4 @@
-import './App.css'
+import styles from './App.module.css'
 import MenuBar from './components/MenuBar/MenuBar'
 import Card from './components/Card/Card'
 import GameBoard from './components/GameBoard/GameBoard'
@@ -15,21 +15,21 @@ function App() {
 
 
   return (
-    <div className='base'>
-      <div className='column column-left'>
+    <div className={styles['base']}>
+      <div className={`${styles['column']} ${styles['column-left']}`}>
         <Card color={theme.primaryColor} title='PLAYER 1' score={score[Player.PLAYER1]}/>
       </div>
-      <div className='column column-center'>
+      <div className={`${styles['column']} ${styles['column-center']}`}>
         <MenuBar/>
         <GameBoard/>
         {/* Empty Div added to center gameboard */}
         <div style={{height:'10vh'}}></div>
       </div>
-      <div className='column column-right'>
+      <div className={`${styles['column']} ${styles['column-right']}`}>
         <Card color={theme.secondaryColor} title='PLAYER 2' score={score[Player.PLAYER2]}/>
       </div>
       <TurnCard/>
-      <div className="footer"></div>
+      <div className={styles["footer"]}></div>
     </div> 
   )
 }
