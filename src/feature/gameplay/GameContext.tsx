@@ -37,7 +37,6 @@ const INIT_BOARD = [
     new Array(6).fill(Player.NONE),
     new Array(6).fill(Player.NONE),
 ]
-const MAX_COUNTERS = INIT_BOARD.length * INIT_BOARD[0].length
 const WIN_THRESH = 4
 type Score = {
     [Player.PLAYER1]:number
@@ -56,24 +55,15 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     })
     const [isGameOver, setIsGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<Player>(Player.NONE)
-    const [numDiscs, setNumDiscs] = useState<number>(0)
 
     function playDisc(column:number) {
         if (!isGameOver) {
-            // let targetCell:number = -1
-            // for (let i = 0; i < board[column].length; i++) {
-            //     if (board[column][i] === Player.NONE) {
-            //         targetCell += 1
-            //     }
-            // }
+
             let targetCell:number = findNewDiscPosition(column)
             if (targetCell >= 0 && targetCell <= board[column].length) {
-                // const newBoard = [...board]
                 const newBoard = board.map(c => [...c])
-                const newNumCounters = numDiscs + 1
                 newBoard[column][targetCell] = currentPlayer
                 setBoard(newBoard)
-                setNumDiscs(newNumCounters)
                 setBoardHistory([
                     ...boardHistory,
                     newBoard
@@ -82,7 +72,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 if (currentPlayerWon) {
                     endGame(currentPlayer)
                 }
-                else if (!currentPlayerWon && newNumCounters === MAX_COUNTERS) {
+                else if (!currentPlayerWon && boardIsFull(newBoard)) {
                     //handle draw
                     endGame(Player.NONE)
                 }
@@ -111,9 +101,19 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         let newScore = {...score}
         newScore[candidateWinner as keyof Score] += 1
         setScore(newScore)
-        setNumDiscs(0)
         setIsGameOver(true)
         setBoardHistory([INIT_BOARD.map(b => [...b])])
+    }
+
+    function boardIsFull(board:number[][]):boolean {
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (board[i][j] === Player.NONE) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 
     function evaluateBoard(board:number[][], player:Player):boolean {
@@ -236,8 +236,6 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             //Catches cases where we popout a column that is full and the top most disc should be empty
             newBoard[column][0] = Player.NONE
             setBoard(newBoard)
-            const newNumCounters = numDiscs - 1
-            setNumDiscs(newNumCounters)
             setBoardHistory([
                 ...boardHistory,
                 newBoard
@@ -269,7 +267,6 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         setWinner(Player.NONE)
         setIsGameOver(false)
         setBoardHistory([INIT_BOARD.map(b => [...b])])
-        setNumDiscs(0)
     }
 
     function canPopout(column:number):boolean {
