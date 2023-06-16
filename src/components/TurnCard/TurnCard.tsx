@@ -1,6 +1,7 @@
 import { useGameContext } from "../../feature/gameplay/GameContext"
 import { COLOR_DICT, Player } from "../../feature/gameplay/connect4"
 import MenuButton from "../MenuButton/MenuButton"
+import styles from './TurnCard.module.css'
 
 export default function TurnCard() {
     const {currentPlayer, winner, resetGame, isGameOver,  undoMove, getTurnNumber} = useGameContext()
@@ -9,18 +10,18 @@ export default function TurnCard() {
         return {backgroundColor:COLOR_DICT[winner]}
     }
     return (
-        <div className="turn-card" style={setTurnCardColour()}>
+        <div className={styles["turn-card"]} style={setTurnCardColour()}>
         {
           !isGameOver 
-            ? <div className='gameover-card'>
-                <label className='turn-label'>PLAYER {currentPlayer}'s TURN</label>
+            ? <div className={styles['gameover-card']}>
+                <label className={styles['turn-label']}>PLAYER {currentPlayer}'s TURN</label>
                 {
                   (getTurnNumber() > 1) &&
                     <MenuButton onClick={undoMove} label='UNDO'/>
                 }
               </div>
-            : <div className='gameover-card'>
-                <label className='turn-label'>
+            : <div className={styles['gameover-card']}>
+                <label className={styles['turn-label']}>
                   {
                     winner !== Player.NONE
                       ? <span>PLAYER {winner} WINS!</span>

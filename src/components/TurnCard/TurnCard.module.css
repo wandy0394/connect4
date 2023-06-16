@@ -1,0 +1,28 @@
+.turn-card {
+    position:absolute;
+    aspect-ratio: 6/4;
+    height:15vh;
+    border-radius: 5%;
+    background-color: red;
+    bottom:0;
+    left:50%;
+    transform:translate(-50%, -25%);
+    box-shadow: 0 1rem black;
+    border:0.325rem solid black;
+    z-index: 3;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .turn-label {
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  
+  .gameover-card {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+  }

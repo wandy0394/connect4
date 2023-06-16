@@ -44,10 +44,9 @@ type Score = {
 }
 export function GameProvider({children}:PropsWithChildren<any>) {
     //create 2D deep copy of initial board
-    let initialBoard = INIT_BOARD.map(b => [...b])
 
-    const [board, setBoard] = useState<number[][]>(initialBoard)
-    const [boardHistory, setBoardHistory] = useState<number[][][]>([initialBoard])
+    const [board, setBoard] = useState<number[][]>(INIT_BOARD)
+    const [boardHistory, setBoardHistory] = useState<number[][][]>([INIT_BOARD])
     const [currentPlayer, setCurrentPlayer] = useState<Player>(Player.PLAYER1)
     const [score, setScore] = useState<Score>({
         [Player.PLAYER1]:0,
@@ -72,7 +71,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 if (currentPlayerWon) {
                     endGame(currentPlayer)
                 }
-                else if (!currentPlayerWon && boardIsFull(newBoard)) {
+                else if (!currentPlayerWon && isBoardFull(newBoard)) {
                     //handle draw
                     endGame(Player.NONE)
                 }
@@ -102,10 +101,10 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         newScore[candidateWinner as keyof Score] += 1
         setScore(newScore)
         setIsGameOver(true)
-        setBoardHistory([INIT_BOARD.map(b => [...b])])
+        setBoardHistory([INIT_BOARD])
     }
 
-    function boardIsFull(board:number[][]):boolean {
+    function isBoardFull(board:number[][]):boolean {
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[i].length; j++) {
                 if (board[i][j] === Player.NONE) {
@@ -256,7 +255,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     }
 
     function resetGame(resetScore:boolean) {
-        setBoard(INIT_BOARD.map(b => [...b]))
+        setBoard(INIT_BOARD)
         setCurrentPlayer(Player.PLAYER1)
         if (resetScore) {
             setScore({
@@ -266,7 +265,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         }
         setWinner(Player.NONE)
         setIsGameOver(false)
-        setBoardHistory([INIT_BOARD.map(b => [...b])])
+        setBoardHistory([INIT_BOARD])
     }
 
     function canPopout(column:number):boolean {
@@ -285,9 +284,9 @@ export function GameProvider({children}:PropsWithChildren<any>) {
 
     function undoMove() {
         if (!isGameOver && boardHistory.length > 1) {
-
             currentPlayer === Player.PLAYER1 ? setCurrentPlayer(Player.PLAYER2) : setCurrentPlayer(Player.PLAYER1) 
-            setBoard(boardHistory[boardHistory.length - 2])
+            const newBoard = boardHistory[boardHistory.length - 2].map(c=>[...c])
+            setBoard(newBoard)
             setBoardHistory(boardHistory.filter((_, index) => index < (boardHistory.length - 1)))
         }
     }
