@@ -1,8 +1,7 @@
 import { useGameContext } from '../../feature/gameplay/GameContext'
 import { COLOR_DICT, Player, EnumDictionary } from '../../feature/gameplay/connect4'
-import Chevron from '../Chevron/Chevron'
 import ColoredDisc from '../ColoredDisc/ColoredDisc'
-import { theme } from '../theme/theme'
+import PopoutZone from '../PopoutZone/PopoutZone'
 import styles from './GameBoard.module.css'
 import {useState} from 'react'
 
@@ -11,9 +10,7 @@ import {useState} from 'react'
 const ANIMATION_TIME_MS = 200
 
 export default function GameBoard() {
-    const {board, playDisc, currentPlayer, canPopout, popout, findNewDiscPosition, isGameOver} = useGameContext()
-    const [chevronIsVisible, setChevronIsVisible] = useState<boolean>(false)
-    const [hoveredChevronIndex, setHoveredChevronIndex] = useState<number>(-1)
+    const {board, playDisc, currentPlayer, findNewDiscPosition, isGameOver} = useGameContext()
     const [animate, setAnimate] = useState<boolean>(false)
     const [selectedColumn, setSelectedColumn] = useState<number>(-1)
 
@@ -21,7 +18,7 @@ export default function GameBoard() {
         if (!animate) setSelectedColumn(index)
     }
 
-    function hideDiscCursor(index:number) {
+    function hideDiscCursor() {
         if (!animate) setSelectedColumn(-1)
     }
     function handleColumClick(column:number) {
@@ -51,17 +48,6 @@ export default function GameBoard() {
         setSelectedColumn(-1)
     }
 
-    function showChevron(index:number) {
-        setChevronIsVisible(true)
-        setHoveredChevronIndex(index)
-    }
-    function hideChevron() {
-        setHoveredChevronIndex(-1)
-        setChevronIsVisible(false)
-    }
-    function handleChevronClick(index:number) {
-        if (!isGameOver) popout(index)
-    }
     return (
         <>
             <div style ={{
@@ -90,7 +76,6 @@ export default function GameBoard() {
                                 `}
                                 onAnimationEnd={()=>resolveAnimation(index)}
                             >
-                                {/* <label>VVV</label> */}
                                 <ColoredDisc color={COLOR_DICT[currentPlayer]} size={100}/>
                             </div>
                         </div>
@@ -108,7 +93,7 @@ export default function GameBoard() {
                                 <div 
                                     id={'column-container-'+colIndex}
                                     className={styles.column} 
-                                    onMouseLeave={()=>hideDiscCursor(colIndex)} 
+                                    onMouseLeave={()=>hideDiscCursor()} 
                                     onMouseEnter={()=>showDiscCursor(colIndex)}
                                     onClick={()=>handleColumClick(colIndex)}
                                 >
@@ -116,7 +101,7 @@ export default function GameBoard() {
                                         col.map((row, rowIndex)=> {
                                             
                                             return (
-                                                <div  className={styles['disc-container']}>
+                                                <div className={styles['disc-container']}>
                                                     <div className={styles['disc-hole']}>
                                                         <div className={styles['disc-shadow']}>
 
@@ -142,33 +127,7 @@ export default function GameBoard() {
                         
                     }
                 </>
-                <>
-                    {
-                        board.map((_, index) => {
-                            return (
-                                <div 
-                                    className={styles.chevrons}
-                                    onMouseLeave={()=>hideChevron()} 
-                                    onMouseEnter={()=>showChevron(index)}
-                                    onClick={()=>handleChevronClick(index)}
-                                >
-                                    <div id={'popout-'+index} className={styles.chevron}>
-                                        {
-                                            canPopout(index) &&
-                                            <Chevron 
-                                                colour={
-                                                    (chevronIsVisible && hoveredChevronIndex === index)
-                                                    ? COLOR_DICT[currentPlayer] 
-                                                    : theme.neutralDarkGray
-                                                }
-                                            />
-                                        }
-                                    </div>
-                                </div>
-                            )
-                        })
-                    }
-                </>
+                <PopoutZone/>
                 </div>
             </div>
         </>

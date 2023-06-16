@@ -56,14 +56,6 @@
 }
 
 
-.chevrons:hover {
-    cursor:pointer;
-}
-
-.chevrons {
-    height: 2vh;
-    background-color: var(--neutral-white);
-}
 .dropping-disc {
     transform: scale(80%);
     position: relative;

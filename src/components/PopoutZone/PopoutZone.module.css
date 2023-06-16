@@ -1,0 +1,8 @@
+.chevrons:hover {
+    cursor:pointer;
+}
+
+.chevrons {
+    height: 2vh;
+    background-color: var(--neutral-white);
+}

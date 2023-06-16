@@ -22,7 +22,7 @@ export const GameContext = createContext<GameContextValue | undefined>(undefined
 export function useGameContext() {
     const context = useContext(GameContext)
     if (context === undefined) {
-        throw new Error('Context is undefined. Hook called uutside context provider')
+        throw new Error('Context is undefined. Hook called outside context provider')
     }
 
     return context
