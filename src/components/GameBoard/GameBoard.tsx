@@ -1,6 +1,7 @@
 import { useGameContext } from '../../feature/gameplay/GameContext'
 import { COLOR_DICT, Player, EnumDictionary } from '../../feature/gameplay/connect4'
 import ColoredDisc from '../ColoredDisc/ColoredDisc'
+import GameBoardCell from '../GameBoardCell/GameBoardCell'
 import PopoutZone from '../PopoutZone/PopoutZone'
 import styles from './GameBoard.module.css'
 import {useState} from 'react'
@@ -53,7 +54,6 @@ export default function GameBoard() {
             <div style ={{
                 display:'grid',
                 gridTemplateColumns: 'repeat(7, 1fr)',
-                // border:'1px solid red',
                 paddingLeft:'2%',
                 paddingRight:'2%',
                 width:'100%',
@@ -68,17 +68,17 @@ export default function GameBoard() {
                                     visibility: (selectedColumn === index) ? 'visible':'hidden',
                                 }}
                             >
-                            <div 
-                                className={`
-                                    ${styles['dropping-disc']} 
-                                    ${(animate && selectedColumn === index) 
-                                        && styles['start-drop-animation']}
-                                `}
-                                onAnimationEnd={()=>resolveAnimation(index)}
-                            >
-                                <ColoredDisc color={COLOR_DICT[currentPlayer]} size={100}/>
+                                <div 
+                                    className={`
+                                        ${styles['dropping-disc']} 
+                                        ${(animate && selectedColumn === index) 
+                                            && styles['start-drop-animation']}
+                                    `}
+                                    onAnimationEnd={()=>resolveAnimation(index)}
+                                >
+                                    <ColoredDisc color={COLOR_DICT[currentPlayer]} size={100}/>
+                                </div>
                             </div>
-                        </div>
                         )
                     })
                 }
@@ -98,25 +98,13 @@ export default function GameBoard() {
                                     onClick={()=>handleColumClick(colIndex)}
                                 >
                                     {
-                                        col.map((row, rowIndex)=> {
-                                            
+                                        col.map((value, rowIndex)=> {
                                             return (
-                                                <div className={styles['disc-container']}>
-                                                    <div className={styles['disc-hole']}>
-                                                        <div className={styles['disc-shadow']}>
-
-                                                            <ColoredDisc 
-                                                                id={`disc-${colIndex}-${rowIndex}`}
-                                                                extraStyle={{
-                                                                    visibility: row != Player.NONE ? 'visible' : 'hidden',
-                                                                    transform:'translateY(-15%)'
-                                                                }} 
-                                                                size={100} 
-                                                                color={COLOR_DICT[row as keyof EnumDictionary<Player, string>]}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <GameBoardCell 
+                                                    colIndex={colIndex} 
+                                                    rowIndex={rowIndex} 
+                                                    cellValue={value}
+                                                />
                                             )
                                         })
 

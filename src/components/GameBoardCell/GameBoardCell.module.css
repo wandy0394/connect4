@@ -1,0 +1,28 @@
+.disc-container {
+    overflow:hidden;
+    /* border:1px solid red; */
+}
+
+.disc-hole {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    /* padding:10%; */
+    position: relative;
+    z-index: 4;
+    border-radius: 100%;
+    transform:scale(80%);
+    box-shadow: 0 0 0 75px var(--neutral-white);
+    overflow:hidden;
+    width:100%;
+}
+
+.disc-shadow {
+    width:100%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    transform:translateY(15%);
+    box-shadow: 0 0 0 500px black;
+}
