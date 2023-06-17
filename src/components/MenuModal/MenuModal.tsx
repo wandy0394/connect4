@@ -19,10 +19,10 @@ export default function MenuModal(props:Props) {
             >
                 <div className={styles['buttons']}>
                     <div className={`${styles['modal-button']} ${styles['button-primary']}`}>
-                        PLAYER vs CPU
+                        PLAYER vs PLAYER
                     </div>
                     <div className={`${styles['modal-button']} ${styles['button-secondary']}`}>
-                        PLAYER vs PLAYER
+                        PLAYER vs CPU (coming soon)
                     </div>
                     <div 
                         className={`${styles['modal-button']} ${styles['button-white']}`}
