@@ -6,16 +6,18 @@
 /**
  * Testing GameContext and GameProvider
  */
-import {render} from '@testing-library/react'
+import {render, cleanup} from '@testing-library/react'
+import { GameProvider } from '../src/context/GameContext'
+import TurnCard from '../src/components/TurnCard/TurnCard'
 
 describe('<GameProvider/>', () => {
     beforeEach(()=>{
         render(
-            <div/>
+            <GameProvider>
+                <TurnCard/>
+            </GameProvider>
         )
     })
-    it('should work', ()=>{
-        expect(1+1).toBe(2)
-    })
 
+    afterEach(cleanup)
 })
