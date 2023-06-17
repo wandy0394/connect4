@@ -3,8 +3,8 @@ import MenuBar from './components/MenuBar/MenuBar'
 import Card from './components/Card/Card'
 import GameBoard from './components/GameBoard/GameBoard'
 import  {Player} from './feature/gameplay/connect4'
-import { useGameContext } from './feature/gameplay/GameContext'
-import { theme } from './components/theme/theme'
+import { useGameContext } from './context/GameContext'
+import { theme } from './theme/theme'
 import TurnCard from './components/TurnCard/TurnCard'
 
 

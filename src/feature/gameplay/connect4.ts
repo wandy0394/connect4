@@ -1,5 +1,3 @@
-import { theme } from "../../components/theme/theme"
-
 /**
  * Module contains game logic and definitions
  * 
@@ -11,15 +9,6 @@ export enum Player {
     PLAYER2 = 2,
 }
 
-export type EnumDictionary<T extends string | number, U> = {
-    [key in T]:U
-}
-
-export const COLOR_DICT:EnumDictionary<Player, string> = {
-    [Player.NONE]: theme.white,
-    [Player.PLAYER1]: theme.primaryColor,
-    [Player.PLAYER2]: theme.secondaryColor,
-}
 
 export const INIT_BOARD = [
     new Array(6).fill(Player.NONE),

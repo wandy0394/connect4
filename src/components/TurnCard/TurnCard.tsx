@@ -1,5 +1,6 @@
-import { useGameContext } from "../../feature/gameplay/GameContext"
-import { COLOR_DICT, Player } from "../../feature/gameplay/connect4"
+import { useGameContext } from "../../context/GameContext"
+import { Player } from "../../feature/gameplay/connect4"
+import { COLOR_DICT } from "../../theme/theme"
 import MenuButton from "../MenuButton/MenuButton"
 import styles from './TurnCard.module.css'
 

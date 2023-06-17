@@ -1,4 +1,4 @@
-import { useGameContext } from '../../feature/gameplay/GameContext'
+import { useGameContext } from '../../context/GameContext'
 import { findNewDiscPosition } from '../../feature/gameplay/connect4'
 import DiscDropZone from '../DiscDropZone/DiscDropZone'
 import GameBoardCell from '../GameBoardCell/GameBoardCell'

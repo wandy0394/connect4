@@ -1,5 +1,5 @@
 import {createContext, useContext, PropsWithChildren, useState} from 'react'
-import { INIT_BOARD, Player, Score, canPopout, evaluateBoard, findNewDiscPosition, isBoardFull } from './connect4'
+import { INIT_BOARD, Player, Score, canPopout, evaluateBoard, findNewDiscPosition, isBoardFull } from '../feature/gameplay/connect4'
 type GameContextValue = {
     board:number[][],
     setBoard: React.Dispatch<React.SetStateAction<number[][]>>

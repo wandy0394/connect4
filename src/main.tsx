@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
-import { GameProvider } from './feature/gameplay/GameContext.tsx'
+import { GameProvider } from './context/GameContext.tsx'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

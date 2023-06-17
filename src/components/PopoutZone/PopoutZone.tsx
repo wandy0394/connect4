@@ -1,9 +1,9 @@
-import { useGameContext } from "../../feature/gameplay/GameContext"
+import { useGameContext } from "../../context/GameContext"
 import {useState} from 'react'
 import styles from './PopoutZone.module.css'
 import Chevron from "../Chevron/Chevron"
-import { COLOR_DICT, canPopout } from "../../feature/gameplay/connect4"
-import { theme } from "../theme/theme"
+import { canPopout } from "../../feature/gameplay/connect4"
+import { COLOR_DICT, theme } from "../../theme/theme"
 
 export default function PopoutZone() {
     const {isGameOver, popout, board, currentPlayer} = useGameContext()

@@ -1,25 +1,21 @@
-import { useGameContext } from "../../feature/gameplay/GameContext"
-import {useState} from 'react'
+import { useGameContext } from "../../context/GameContext"
 import styles from './DiscDropZone.module.css'
 import ColoredDisc from "../ColoredDisc/ColoredDisc"
-import { COLOR_DICT } from "../../feature/gameplay/connect4"
+import { COLOR_DICT } from "../../theme/theme"
 
 type Props = {
     animate:boolean
     resolveAnimation: (column:number) => void
     selectedColumn:number
     [rest:string]:any
-    // setSelectedColumn: React.Dispatch<React.SetStateAction<number>>
 }
 
 export default function DiscDropZone(props:Props) {
     const {selectedColumn, animate, resolveAnimation, ...rest} = props
     const {board, currentPlayer} = useGameContext()
-    // const [selectedColumn, setSelectedColumn] = useState<number>(-1)
 
     return (
         <div 
-            // id={'drop-disc-zone'} 
             {...rest}
             style ={{
                 display:'grid',

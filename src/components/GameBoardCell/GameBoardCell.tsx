@@ -1,4 +1,5 @@
-import { Player, COLOR_DICT, EnumDictionary } from "../../feature/gameplay/connect4"
+import { Player } from "../../feature/gameplay/connect4"
+import { COLOR_DICT, EnumDictionary } from "../../theme/theme"
 import ColoredDisc from "../ColoredDisc/ColoredDisc"
 import styles from './GameBoardCell.module.css'
 

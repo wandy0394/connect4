@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import GameIcon from '../GameIcon/GameIcon'
 import MenuButton from '../MenuButton/MenuButton'
 import styles from './menuBar.module.css'
-import { useGameContext } from '../../feature/gameplay/GameContext'
+import { useGameContext } from '../../context/GameContext'
 
 export default function MenuBar() {
     const {resetGame} = useGameContext()
