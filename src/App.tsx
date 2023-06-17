@@ -21,6 +21,10 @@ function App() {
       </div>
       <div className={`${styles['column']} ${styles['column-center']}`}>
         <MenuBar/>
+        <div className={styles['cards']}>
+          <Card color={theme.primaryColor} title='PLAYER 1' score={score[Player.PLAYER1]}/>
+          <Card flipped={true} color={theme.secondaryColor} title='PLAYER 2' score={score[Player.PLAYER2]}/>
+        </div>
         <GameBoard/>
         {/* Empty Div added to center gameboard */}
         <div style={{height:'10vh'}}></div>
