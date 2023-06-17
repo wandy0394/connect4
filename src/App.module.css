@@ -5,11 +5,11 @@
 }
 
 :root {
-  --base-color: #5C2DD5;
-  --base-light: #7945FF;
-  --base-hover: #351f6E;
-  --primary-color:#FD6687;
-  --primary-hover:#AD2F4A;
+  --base-color: #1f8f8b;
+  --base-light: #2CC7C2;
+  --base-hover: #156e6b;
+  --primary-color:#FC6a6a;
+  --primary-hover:#DE5959;
   --secondary-color:#FFCE67;
   --secondary-hover:#BD8B24;
   --neutral-white: #FFFFFF;
