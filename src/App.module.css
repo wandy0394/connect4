@@ -9,10 +9,11 @@
   --base-light: #7945FF;
   --base-hover: #351f6E;
   --primary-color:#FD6687;
-  --primary-hover:#FD6687;
+  --primary-hover:#AD2F4A;
   --secondary-color:#FFCE67;
-  --secondary-hover:#FFCE67;
+  --secondary-hover:#BD8B24;
   --neutral-white: #FFFFFF;
+  --dim-white: #DDDDDD;
   --neutral-gray-light: #AAAAAA; 
   --neutral-gray-dark: #444444; 
   --font-family: "Monaco", monospace;

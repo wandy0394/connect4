@@ -1,0 +1,19 @@
+.icon {
+    display:grid;
+    grid-template-rows:1fr 1fr;
+    grid-template-columns:1fr 1fr;
+    gap: 20%;
+    height:10vh;
+    aspect-ratio:1/1;
+}
+
+@media only screen and (max-width: 811px) {
+    .icon {
+        display:grid;
+        grid-template-rows:1fr 1fr;
+        grid-template-columns:1fr 1fr;
+        gap: 20%;
+        height:5vh;
+        aspect-ratio:1/1;
+    }
+}

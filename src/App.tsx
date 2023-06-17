@@ -10,10 +10,7 @@ import TurnCard from './components/TurnCard/TurnCard'
 
 
 function App() {
-
   const {score} = useGameContext()
-
-
   return (
     <div className={styles['base']}>
       <div className={`${styles['column']} ${styles['column-left']}`}>
