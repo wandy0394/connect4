@@ -50,7 +50,7 @@ export default function GameBoard() {
     }
 
     return (
-        <>
+        <div>
             <DiscDropZone 
                 id={'drop-disc-zone'} 
                 animate={animate} 
@@ -92,6 +92,6 @@ export default function GameBoard() {
                 <PopoutZone/>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

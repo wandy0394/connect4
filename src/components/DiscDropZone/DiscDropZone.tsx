@@ -17,20 +17,12 @@ export default function DiscDropZone(props:Props) {
     return (
         <div 
             {...rest}
-            style ={{
-                display:'grid',
-                gridTemplateColumns: 'repeat(7, 1fr)',
-                paddingLeft:'2%',
-                paddingRight:'2%',
-                width:'100%',
-                transform:'translateY(50%)',
-            }}
+            className={styles['container']}
         >
             {
                 board.map((_, index) => {
                     return (
                         <div 
-                            // id={'drop-disc-' + index} 
                             style={{
                                 visibility: (selectedColumn === index) ? 'visible':'hidden',
                             }}

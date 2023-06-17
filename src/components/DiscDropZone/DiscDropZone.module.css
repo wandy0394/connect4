@@ -19,3 +19,12 @@
         transform: scale(80%) translateY(var(--disc-end-height));
     }
 }
+
+.container {
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding-left: 2%;
+    padding-right: 2%;
+    width: 100%;
+    transform: translateY(50%);
+}
