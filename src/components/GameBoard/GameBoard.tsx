@@ -1,5 +1,5 @@
 import { useGameContext } from '../../context/GameContext'
-import { findNewDiscPosition } from '../../feature/gameplay/connect4'
+import { GAME_MODE, getNewDiscRow } from '../../feature/gameplay/connect4'
 import DiscDropZone from '../DiscDropZone/DiscDropZone'
 import GameBoardCell from '../GameBoardCell/GameBoardCell'
 import PopoutZone from '../PopoutZone/PopoutZone'
@@ -11,7 +11,7 @@ import {useState} from 'react'
 const ANIMATION_TIME_MS = 200
 
 export default function GameBoard() {
-    const {board, playDisc, isGameOver} = useGameContext()
+    const {board, playDisc, isGameOver, currentPlayer, gameMode, CPUMove} = useGameContext()
     const [animate, setAnimate] = useState<boolean>(false)
     const [selectedColumn, setSelectedColumn] = useState<number>(-1)
 
@@ -23,7 +23,7 @@ export default function GameBoard() {
         if (!animate) setSelectedColumn(-1)
     }
     function handleColumClick(column:number) {
-        let row = findNewDiscPosition(board, column)
+        let row = getNewDiscRow(board, column)
         if (row >= 0 && !isGameOver && !animate) {
             //calculate height to drop disc and animation time
             let targetRow = document.getElementById(`cell-${column}-${row}`)?.getBoundingClientRect()
@@ -44,9 +44,12 @@ export default function GameBoard() {
     }
 
     function resolveAnimation(column:number) {
-        playDisc(column)
+        let newBoard = playDisc(board, column, currentPlayer)
         setAnimate(false)
         setSelectedColumn(-1)
+        if (gameMode === GAME_MODE.PLAYER_VS_CPU && newBoard) {
+            CPUMove(newBoard)
+        }
     }
 
     return (

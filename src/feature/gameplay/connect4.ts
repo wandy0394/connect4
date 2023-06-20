@@ -7,8 +7,13 @@ export enum Player {
     NONE = 0,
     PLAYER1 = 1,
     PLAYER2 = 2,
+    CPU = 3
 }
 
+export enum GAME_MODE {
+    PLAYER_VS_PLAYER = 0,
+    PLAYER_VS_CPU = 1
+}
 
 export const INIT_BOARD = [
     new Array(6).fill(Player.NONE),
@@ -26,7 +31,7 @@ export type Score = {
 }
 
 
-export function evaluateBoard(board:number[][], player:Player):boolean {
+export function isGameWon(board:number[][], player:Player):boolean {
     //check all columns
     let count = 0
     for (let i = 0; i < board.length; i++) {
@@ -155,7 +160,7 @@ export function canPopout(board:number[][], column:number):boolean {
     return false
 }
 
-export function findNewDiscPosition(board:number[][], column:number):number {
+export function getNewDiscRow(board:number[][], column:number):number {
     let targetCell:number = -1
     for (let i = 0; i < board[column].length; i++) {
         if (board[column][i] === Player.NONE) {
