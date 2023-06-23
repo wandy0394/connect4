@@ -1,4 +1,5 @@
 import { useGameContext } from '../../context/GameContext'
+import { evaluateBoard2 } from '../../feature/cpu-opponent/CPU-player'
 import { GAME_MODE, getNewDiscRow } from '../../feature/gameplay/connect4'
 import DiscDropZone from '../DiscDropZone/DiscDropZone'
 import GameBoardCell from '../GameBoardCell/GameBoardCell'
@@ -47,8 +48,13 @@ export default function GameBoard() {
         let newBoard = playDisc(board, column, currentPlayer)
         setAnimate(false)
         setSelectedColumn(-1)
-        if (gameMode === GAME_MODE.PLAYER_VS_CPU && newBoard) {
-            CPUMove(newBoard)
+        if (newBoard) {
+            if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
+                CPUMove(newBoard)
+            }
+            else {
+                // console.log(evaluateBoard2(newBoard, currentPlayer))
+            }
         }
     }
 
@@ -68,6 +74,7 @@ export default function GameBoard() {
                             return (
                                 <div 
                                     id={'column-container-'+colIndex}
+                                    key={'column-container-'+colIndex}
                                     className={styles.column} 
                                     onMouseLeave={()=>hideDiscCursor()} 
                                     onMouseEnter={()=>showDiscCursor(colIndex)}
@@ -78,6 +85,7 @@ export default function GameBoard() {
                                             return (
                                                 <GameBoardCell 
                                                     id={`cell-${colIndex}-${rowIndex}`} 
+                                                    key={`cell-key-${colIndex}-${rowIndex}`} 
                                                     colIndex={colIndex} 
                                                     rowIndex={rowIndex} 
                                                     cellValue={value}

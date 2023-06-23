@@ -1,6 +1,6 @@
 import {createContext, useContext, PropsWithChildren, useState} from 'react'
 import { INIT_BOARD, Player, Score, canPopout, isGameWon, getNewDiscRow, isBoardFull, GAME_MODE } from '../feature/gameplay/connect4'
-import { MOVE_TYPE, Move, SCORE, findNextMove } from '../feature/cpu-opponent/CPU-player'
+import { MOVE_TYPE, Move, SCORE,  findNextMove2 } from '../feature/cpu-opponent/CPU-player'
 type GameContextValue = {
     board:number[][],
     setBoard: React.Dispatch<React.SetStateAction<number[][]>>
@@ -10,7 +10,7 @@ type GameContextValue = {
     resetGame: (resetScore:boolean)=>void
     score: Score
     isGameOver:boolean
-    popout: (column:number) => void
+    popout: (column:number, board:number[][]) => number[][]|null
     undoMove: () => void
     getTurnNumber: () => number
     CPUMove: (board:number[][]) => void
@@ -46,7 +46,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     function playDisc(board:number[][], column:number, player:Player, isHumanMove:boolean = true):number[][] | null {
         if (!isGameOver) {
             let targetCell:number = getNewDiscRow(board, column)
-            if (targetCell >= 0 && targetCell <= board[column].length) {
+            if (targetCell >= 0 && targetCell < board[column].length) {
                 const newBoard = board.map(c => [...c])
                 newBoard[column][targetCell] = player
                 setBoard(newBoard)
@@ -94,7 +94,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         setBoardHistory([INIT_BOARD])
     }
 
-    function popout(column:number) {
+    function popout(column:number, board:number[][]):number[][] | null {
         if (canPopout(board, column)) {
 
             const newBoard = board.map(c=>[...c])
@@ -121,7 +121,9 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             else {
                 nextTurn()
             }
+            return newBoard
         }
+        return null
     }
 
 
@@ -141,8 +143,8 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     function nextTurn() {
         let nextPlayer = -1
         currentPlayer === Player.PLAYER1 ? nextPlayer = Player.PLAYER2 : nextPlayer = Player.PLAYER1
-        // setCurrentPlayer(nextPlayer)
         if (gameMode === GAME_MODE.PLAYER_VS_PLAYER) {
+            setCurrentPlayer(nextPlayer)
         }
         // else if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
         //     //make CPU move
@@ -178,15 +180,18 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             score:SCORE.MIN
         }
         let boardCopy = board.map(c=>[...c])
-        for (let i = 0; i < board.length; i++) {
-            let move = findNextMove(boardCopy, 6, CPU_PLAYER, true, {column:i, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
-            if (move.score >= bestMove.score)
-            bestMove = {...move}
-        }
+        // let move = findNextMove(boardCopy, 6, CPU_PLAYER, true, {column:i, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
+        // debugger
+        bestMove = findNextMove2(boardCopy, 5, CPU_PLAYER, true, SCORE.NEG_INF, SCORE.INF, {column:0, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
         console.log(bestMove)
         if (bestMove.column !== undefined) {
             setTimeout(()=>{
-                playDisc(boardCopy, bestMove.column as number, CPU_PLAYER, false)
+                if (bestMove.moveType === MOVE_TYPE.PLAY_DISC) {
+                    playDisc(boardCopy, bestMove.column as number, CPU_PLAYER, false)
+                }
+                else if (bestMove.moveType === MOVE_TYPE.POPOUT) {
+                    popout(bestMove.column as number, boardCopy)
+                }
                 nextTurn()
             }, 0)
         }

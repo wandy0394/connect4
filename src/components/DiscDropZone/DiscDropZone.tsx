@@ -23,6 +23,7 @@ export default function DiscDropZone(props:Props) {
                 board.map((_, index) => {
                     return (
                         <div 
+                            key={`dropzone-key-${index}`}
                             style={{
                                 visibility: (selectedColumn === index) ? 'visible':'hidden',
                             }}

@@ -39,7 +39,7 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    console.log('Winner is Player ' + player + ' in column', i+1)
+                    // console.log('Winner is Player ' + player + ' in column', i+1)
                     return true
                 }
             }
@@ -53,12 +53,12 @@ export function isGameWon(board:number[][], player:Player):boolean {
     
     //check all rows
     count = 0
-    for (let j = 0; j < board[j].length; j++) {
+    for (let j = 0; j < board[0].length; j++) {
         for (let i = 0; i < board.length; i++) {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    console.log('Winner is Player ' + player + 'in row', i+1)
+                    // console.log('Winner is Player ' + player + ' in row', i+1)
                     return true
                 }
             }
@@ -78,7 +78,7 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    console.log('Winner is Player ' + player + 'in row', i+1)
+                    // console.log('Winner is Player ' + player + ' in diag', i+1)
                     return true
                 }
             }
@@ -94,7 +94,7 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    console.log('Winner is Player ' + player + 'in row', i+1)
+                    // console.log('Winner is Player ' + player + ' in diag', i+1)
                     return true
                 }
             }
@@ -111,7 +111,7 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    console.log('Winner is Player ' + player + 'in row', i+1)
+                    // console.log('Winner is Player ' + player + ' in diag', i+1)
                     return true
                 }
             }
@@ -126,7 +126,7 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    console.log('Winner is Player ' + player + 'in row', i+1)
+                    // console.log('Winner is Player ' + player + ' in diag', i+1)
                     return true
                 }
             }
@@ -152,11 +152,14 @@ export function isBoardFull(board:number[][]):boolean {
 }
 
 export function canPopout(board:number[][], column:number):boolean {
+    let numEmptyCells = 0
     for (let i = 0; i < board[column].length; i++) {
-        if (board[column][i] !== Player.NONE) {
-            return true
+        if (board[column][i] === Player.NONE) {
+            numEmptyCells++
         }
     }
+    //Popout is a valid move only if the column is at least half full (rounded down)
+    if (numEmptyCells <= Math.floor(board[column].length / 2)) return true
     return false
 }
 
@@ -167,6 +170,6 @@ export function getNewDiscRow(board:number[][], column:number):number {
             targetCell += 1
         }
     }
-    if (targetCell >= 0 && targetCell <= board[column].length) return targetCell
+    if (targetCell >= 0 && targetCell < board[column].length) return targetCell
     return -1
 }

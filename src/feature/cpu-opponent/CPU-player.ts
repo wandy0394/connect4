@@ -1,7 +1,7 @@
 
 //Function that looks at the board state and assigns a value to it
-//If 4 in a row, return +/- 9999, otherwise 
-//return (num(2 in a row) + num(3 in a row)) for Player 1 minus
+//If 4 in a row, return +/- MAX, otherwise 
+
 
 import { Player, WIN_THRESH, isBoardFull, canPopout, isGameWon, getNewDiscRow } from "../gameplay/connect4"
 
@@ -14,9 +14,6 @@ export enum SCORE {
     DRAW = 0
 }
 
-const MAX_SCORE = 99999
-const MIN_SCORE = -99999
-const DRAW_SCORE = 0
 
 export enum MOVE_TYPE  {
     POPOUT="POPOUT",
@@ -37,46 +34,62 @@ type GameNode = {
     targetColumn?:number
 }
 
-function evaluateBoard(board:number[][], player:Player, move:Move):number {
-
-    if (move.moveType === MOVE_TYPE.PLAY_DISC) {
-
-    }
-    else if (move.moveType === MOVE_TYPE.POPOUT) {
-
-    }
 
 
-    return 10
-}
+export function evaluateBoard2(board:number[][], player:Player, move?:Move):number {
+    let opponent = (player === Player.PLAYER1?Player.PLAYER2:Player.PLAYER1)
 
-function evaluatePlayDisc(board:number[][], player:Player, targetColumn:number, targetRow:number):number {
-    let score = 1
-    
-    let offset = WIN_THRESH
-    let start = targetColumn - offset  + 1
-    let end = targetColumn + (WIN_THRESH - offset) 
-
-    for (let i = 0; i < WIN_THRESH; i++) {
-        if (start >= 0 && end < board.length) {
-            
+    let horizontalScore = 0
+    let verticalScore = 0
+    for (let i = 0; i < board.length; i++) {
+        let offset = 0
+        let tempScore = 0
+        for (let j = offset; j <= board[i].length - WIN_THRESH; j++, offset++) {
+            let slice = board[i].slice(j, j+WIN_THRESH)
+            let numPlayerCounters = 0
+            let numOpponentCounters = 0
+            for (const s of slice) {
+                if (s === player) {
+                    numPlayerCounters++
+                }
+                else if (s === opponent) {
+                    numOpponentCounters++
+                }
+            }            
+            tempScore = (numOpponentCounters > 0) ? 0 : numPlayerCounters
         }
-        offset -= 1
+        verticalScore = Math.max(verticalScore, tempScore)
     }
 
-
-    return score
-}
-
-function evaluatePopout(board:number[][], player:Player, targetColumn:number) {
-
+    for (let j = 0; j < board[0].length; j++) {
+        let offset = 0
+        let tempScore = 0
+        for (let i = offset; i <= board.length - WIN_THRESH; i++, offset++) {
+            let numPlayerCounters = 0
+            let numOpponentCounters = 0
+            let slice = board.slice(i, i+WIN_THRESH).map(arr => arr[j])
+            for (const s of slice) {
+                if (s === player) {
+                    numPlayerCounters++
+                }
+                else if (s === opponent) {
+                    numOpponentCounters++
+                }
+            }
+            tempScore = (numOpponentCounters > 0) ? 0 : numPlayerCounters
+            horizontalScore = Math.max(horizontalScore, tempScore)
+        }
+    }
+    return Math.max(horizontalScore, verticalScore)
 }
 
 //Implements minimax algorithm with alpha-beta pruning at some fixed depth 
 
-export function findNextMove(board:number[][], depth:number, player:Player, IsMaximizingPlayer:boolean, move:Move):Move {
-    let gameIsWonByPlayer = isGameWon(board, player)
-    let gameIsWonByOpponent = isGameWon(board, (player==Player.PLAYER1 ? Player.PLAYER2 : Player.PLAYER1))
+export function findNextMove2(board:number[][], depth:number, player:Player, IsMaximizingPlayer:boolean, alpha:number, beta:number, move:Move):Move {
+    let gameIsWonByPlayer = isGameWon(board, Player.PLAYER2)
+    let gameIsWonByOpponent = isGameWon(board, Player.PLAYER1)
+    // let depthFactor = 1
+    let depthFactor = 1-Math.pow(0.5, depth)
 
     if (gameIsWonByPlayer && gameIsWonByOpponent) {
         //draw, simultaneous win
@@ -84,143 +97,201 @@ export function findNextMove(board:number[][], depth:number, player:Player, IsMa
             column:move.column,
             row:move.row,
             moveType:move.moveType,
-            score:DRAW_SCORE
+            score:SCORE.DRAW*depthFactor
         }
     }
     else if (gameIsWonByPlayer) {
-        
-        console.log('WIN')
         return {
             column:move.column,
             row:move.row,
             moveType:move.moveType,
-            score:MAX_SCORE
-        }
+            score:SCORE.MAX*depthFactor
+        }       
     }
     else if (gameIsWonByOpponent) {
-        console.log('LOSE')
         return {
             column:move.column,
             row:move.row,
             moveType:move.moveType,
-            score:MIN_SCORE
+            score:SCORE.MIN*depthFactor
         }
     }
     else if (isBoardFull(board)) {
         //draw, no more valid moves
-        console.log('draw')
         return {
             column:move.column,
             row:move.row,
             moveType:move.moveType,
-            score:DRAW_SCORE
+            score:SCORE.DRAW*depthFactor
         }
     }
     else if (depth === 0) {
-        let score = evaluateBoard(board, player, move)
-        console.log('EVAL ' + score)
+        let scoreCPU = evaluateBoard2(board, Player.PLAYER2, move)
         return {
             column:move.column,
             row:move.row,
             moveType:move.moveType,
-            score:score
+            score:scoreCPU
         }
     }
 
     let nextPlayer = (player == Player.PLAYER1 ? Player.PLAYER2 : Player.PLAYER1)
     if (IsMaximizingPlayer) {
-        let maxScore = SCORE.MIN
+        let maxScore = SCORE.NEG_INF
         let maxScoreMove:Move = {
             column:move.column,
             row:move.row,
             moveType:MOVE_TYPE.PLAY_DISC,
             score:maxScore
         }
-        for (let i = 0; i < board.length; i++) {
-            //try every disc drop
+        let gameNodes:GameNode[] = []
+        // for (let i = 0; i < board.length; i++) {
+        for (let i = board.length - 1; i >= 0; i--) {
             const gameNode = tryPlayDisc(board, i, player)
             if (gameNode !== null) {
-                //update new board
-                // console.log(gameNode.board[2])
-                let newMove = findNextMove(gameNode.board, depth - 1, nextPlayer, false, {column:i, row:gameNode.targetRow, moveType:MOVE_TYPE.PLAY_DISC, score:maxScore})
-                maxScore = Math.max(maxScore, newMove.score)
-                if (maxScore === newMove.score) {
-                    maxScoreMove = {
-                        column:i,
-                        row:gameNode.targetRow,
-                        moveType:MOVE_TYPE.PLAY_DISC,
-                        score:newMove.score
-                    }
-                }
+                gameNodes.push(gameNode)
             }
         }
-        // for (let i = 0; i < board.length; i++) {
-        //     //try every pop out
-        //     const gameNode = tryPopOut(board, i, player)
-        //     if (gameNode !== null) {
-        //         //update new board
-        //         let newMove = findNextMove(gameNode.board, depth - 1, nextPlayer, false, {column:i, row:gameNode.targetRow, moveType:MOVE_TYPE.POPOUT, score:maxScore})
-        //         maxScore = Math.max(maxScore, newMove.score)
-        //         if (maxScore === newMove.score) {
-        //             maxScoreMove = {
-        //                 column:i,
-        //                 row:gameNode.targetRow,
-        //                 moveType:MOVE_TYPE.POPOUT,
-        //                 score:maxScore
-        //             }
-        //         }
-        //     }
-        // }
+        //create array from [0..board.length]
+        let shuffledArray = [...Array(gameNodes.length).keys()].sort(()=>Math.random() - 0.5)
+        for (let i = 0; i < shuffledArray.length; i++) {
+            let gameNode = gameNodes[shuffledArray[i]]
+            let newMove = findNextMove2(gameNode.board, depth - 1, nextPlayer, false, alpha, beta, {column:gameNode.targetColumn, row:gameNode.targetRow, moveType:MOVE_TYPE.PLAY_DISC, score:maxScore})
+            
+            if (maxScore < newMove.score) {
+                maxScore = newMove.score
+                maxScoreMove = {
+                    column:gameNode.targetColumn,
+                    row:gameNode.targetRow,
+                    moveType:MOVE_TYPE.PLAY_DISC,
+                    score:newMove.score
+                }
+            }
+
+            if (maxScore > beta) {
+                // console.log('break. Score = ' + maxScore)
+                break;
+            }
+            alpha = Math.max(alpha, maxScore)
+        }
+
+        //clearing the array
+        gameNodes.length = 0
+        gameNodes = []
+        for (let i = board.length - 1; i >= 0; i--) {
+            const gameNode = tryPopOut(board, i, player)
+            if (gameNode !== null) {
+                gameNodes.push(gameNode)
+            }
+        }
+        // console.log(gameNodes.map(c=>c.targetColumn))
+
+        //create array from [0..board.length]
+        shuffledArray = [...Array(gameNodes.length).keys()].sort(()=>Math.random() - 0.5)
+        for (let i = 0; i < shuffledArray.length; i++) {
+            let gameNode = gameNodes[shuffledArray[i]]
+            //update new board
+            let newMove = findNextMove2(gameNode.board, depth - 1, nextPlayer, false, alpha, beta, {column:gameNode.targetColumn, row:gameNode.targetRow, moveType:MOVE_TYPE.POPOUT, score:maxScore})
+            if (maxScore < newMove.score) {
+                maxScore = newMove.score
+                maxScoreMove = {
+                    column:gameNode.targetColumn,
+                    row:gameNode.targetRow,
+                    moveType:MOVE_TYPE.POPOUT,
+                    score:maxScore
+                }
+            }
+
+            if (maxScore > beta) {
+                // console.log('break. Score = ' + maxScore)
+                break;
+            }
+            alpha = Math.max(alpha, maxScore)
+        }
+
         return maxScoreMove
     }
     else {
-        let minScore = SCORE.MAX
+        let minScore = SCORE.INF
         let minScoreMove:Move = {
             column:move.column,
             row:move.row,
             moveType:MOVE_TYPE.PLAY_DISC,
             score:minScore            
         }
-        for (let i = 0; i < board.length; i++) {
+        let gameNodes:GameNode[] = []
+        // for (let i = 0; i < board.length; i++) {
+        for (let i = board.length - 1; i >= 0; i--) {
             const gameNode = tryPlayDisc(board, i, player)
             if (gameNode !== null) {
-                //update new board
-                let newMove = findNextMove(gameNode.board, depth - 1, nextPlayer, true, {column:i, row:gameNode.targetRow, moveType:MOVE_TYPE.PLAY_DISC, score:minScore})
-                minScore = Math.min(minScore, newMove.score)
-                if (minScore === newMove.score) {
-                    minScoreMove = {
-                        column:i,
-                        row:gameNode.targetRow,
-                        moveType:MOVE_TYPE.PLAY_DISC,
-                        score:newMove.score
-                    }
-                }
+                gameNodes.push(gameNode)
             }
         }
-        // for (let i = 0; i < board.length; i++) {
-        //     const gameNode = tryPopOut(board, i, player)
-        //     if (gameNode !== null) {
-        //         //update new board
-        //         let newMove = findNextMove(gameNode.board, depth - 1, nextPlayer, true, {column:gameNode.targetColumn, moveType:MOVE_TYPE.POPOUT, score:minScore})
-        //         minScore = Math.min(minScore, newMove.score)
-        //         if (minScore === newMove.score) {
-        //             minScoreMove = {
-        //                 column:gameNode.targetColumn,
-        //                 row:gameNode.targetRow,
-        //                 moveType:MOVE_TYPE.POPOUT,
-        //                 score:minScore
-        //             }
-        //         }
-        //     }
+        //create array from [0..board.length]
+        
+        let shuffledArray = [...Array(gameNodes.length).keys()].sort(()=>Math.random() - 0.5)
+        for (let i = 0; i < shuffledArray.length; i++) {
+            let gameNode = gameNodes[shuffledArray[i]]
+            let newMove = findNextMove2(gameNode.board, depth - 1, nextPlayer, true, alpha, beta, {column:gameNode.targetColumn, row:gameNode.targetRow, moveType:MOVE_TYPE.PLAY_DISC, score:minScore})
+            if (minScore > newMove.score) {
+                minScore = newMove.score
+                minScoreMove = {
+                    column:gameNode.targetColumn,
+                    row:gameNode.targetRow,
+                    moveType:MOVE_TYPE.PLAY_DISC,
+                    score:newMove.score
+                }
+            }
+            if (minScore < alpha) {
+                // console.log('break. Score = ' + minScore)
+                break;
+            }
+            beta = Math.min(beta, minScore)
+        }
 
-        // }
+        //clearing the array
+        gameNodes.length = 0
+        gameNodes = []
+        for (let i = board.length - 1; i >= 0; i--) {
+            const gameNode = tryPopOut(board, i, player)
+            if (gameNode !== null) {
+                gameNodes.push(gameNode)
+            }
+        }
+        //create array from [0..board.length]
+        shuffledArray = [...Array(gameNodes.length).keys()].sort(()=>Math.random() - 0.5)
+        for (let i = 0; i < shuffledArray.length; i++) {
+            let gameNode = gameNodes[shuffledArray[i]]
+            if (gameNode !== null) {
+                //update new board
+                let newMove = findNextMove2(gameNode.board, depth - 1, nextPlayer, true, alpha, beta, {column:gameNode.targetColumn, moveType:MOVE_TYPE.POPOUT, score:minScore})
+                if (minScore > newMove.score) {
+                    minScore = newMove.score
+                    minScoreMove = {
+                        column:gameNode.targetColumn,
+                        row:gameNode.targetRow,
+                        moveType:MOVE_TYPE.POPOUT,
+                        score:minScore
+                    }
+                }
+                if (minScore < alpha) {
+                    // console.log('break. Score = ' + minScore)
+                    break;
+                }
+                beta = Math.min(beta, minScore)
+            }
+        }
+
         return minScoreMove
     }
 }
 
+
+
+
 function tryPlayDisc(board:number[][], column:number, player:Player):GameNode | null {
     let targetRow:number = getNewDiscRow(board, column)
-    if (targetRow >= 0 && targetRow <= board[column].length) {
+    if (targetRow >= 0 && targetRow < board[column].length) {
         const newBoard = board.map(c => [...c])
         newBoard[column][targetRow] = player
         return {

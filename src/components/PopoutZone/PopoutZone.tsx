@@ -2,11 +2,11 @@ import { useGameContext } from "../../context/GameContext"
 import {useState} from 'react'
 import styles from './PopoutZone.module.css'
 import Chevron from "../Chevron/Chevron"
-import { canPopout } from "../../feature/gameplay/connect4"
+import { GAME_MODE, canPopout } from "../../feature/gameplay/connect4"
 import { COLOR_DICT, theme } from "../../theme/theme"
 
 export default function PopoutZone() {
-    const {isGameOver, popout, board, currentPlayer} = useGameContext()
+    const {isGameOver, popout, board, currentPlayer, CPUMove, gameMode} = useGameContext()
     const [hoveredChevronIndex, setHoveredChevronIndex] = useState<number>(-1)
     const [chevronIsVisible, setChevronIsVisible] = useState<boolean>(false)
 
@@ -19,7 +19,14 @@ export default function PopoutZone() {
         setChevronIsVisible(false)
     }
     function handleChevronClick(index:number) {
-        if (!isGameOver) popout(index)
+        if (!isGameOver) {
+            let newBoard = popout(index, board)
+            if (newBoard !== null) {
+                if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
+                    CPUMove(newBoard)
+                }
+            }
+        }
     }
 
     return (
@@ -28,6 +35,7 @@ export default function PopoutZone() {
                 board.map((_, index) => {
                     return (
                         <div 
+                            key={`popout-chevron-key-${index}`}
                             className={styles.chevrons}
                             onMouseLeave={()=>hideChevron()} 
                             onMouseEnter={()=>showChevron(index)}
