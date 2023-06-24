@@ -69,6 +69,17 @@
     background-color: var(--secondary-hover);
 }
 
+.rules-summary {
+    display:flex;
+    flex-direction: column;
+    border:0.325rem solid black;
+    box-shadow: 0px 0.625rem black;
+    border-radius: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding:1rem;
+    background-color: var(--neutral-white);
+}
 
 @media only screen and (max-width: 600px) {
 

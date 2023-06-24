@@ -15,7 +15,8 @@ type GameContextValue = {
     undoMove: () => void
     getTurnNumber: () => number
     CPUMove: (board:number[][]) => void
-    gameMode:GAME_MODE
+    gameMode:GAME_MODE,
+    setGameMode: React.Dispatch<React.SetStateAction<GAME_MODE>>
 }
 
 export const GameContext = createContext<GameContextValue | undefined>(undefined)
@@ -34,7 +35,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     //create 2D deep copy of initial board
 
     const [board, setBoard] = useState<number[][]>(INIT_BOARD)
-    const [gameMode, setGameMode] = useState<GAME_MODE>(GAME_MODE.PLAYER_VS_CPU)
+    const [gameMode, setGameMode] = useState<GAME_MODE>(GAME_MODE.PLAYER_VS_PLAYER)
     const [boardHistory, setBoardHistory] = useState<number[][][]>([INIT_BOARD])
     const [currentPlayer, setCurrentPlayer] = useState<Player>(Player.PLAYER1)
     const [score, setScore] = useState<Score>({
@@ -187,7 +188,8 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 undoMove, 
                 getTurnNumber,
                 CPUMove,
-                gameMode
+                gameMode,
+                setGameMode
             }}
         >
             {children}
