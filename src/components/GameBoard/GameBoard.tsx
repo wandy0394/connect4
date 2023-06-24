@@ -11,17 +11,17 @@ import {useState} from 'react'
 const ANIMATION_TIME_MS = 200
 
 export default function GameBoard() {
-    const {board, playDisc, isGameOver, currentPlayer, gameMode, CPUMove} = useGameContext()
+    const {board, playDisc, isGameOver, currentPlayer, gameMode, CPUMove, cpuThinking, setCpuThinking} = useGameContext()
     const [animate, setAnimate] = useState<boolean>(false)
     const [selectedColumn, setSelectedColumn] = useState<number>(-1)
-    const [cpuThinking, setCpuThinking] = useState<boolean>(false)
+    // const [cpuThinking, setCpuThinking] = useState<boolean>(false)
 
     function showDiscCursor(index:number) {
-        if (!animate) setSelectedColumn(index)
+        if (!animate && !cpuThinking) setSelectedColumn(index)
     }
 
     function hideDiscCursor() {
-        if (!animate) setSelectedColumn(-1)
+        if (!animate && !cpuThinking) setSelectedColumn(-1)
     }
     function handleColumClick(column:number) {
         if (cpuThinking) return
@@ -49,15 +49,17 @@ export default function GameBoard() {
 
         let gameState:GameState = playDisc(board, column, currentPlayer)
         setAnimate(false)
-        setCpuThinking(true)
-        function makeCPUMove(gameState:GameState) {
-            if (gameState && !gameState.isGameOver && gameMode === GAME_MODE.PLAYER_VS_CPU) {
-                CPUMove(gameState.board)
-                setCpuThinking(false)
+        setSelectedColumn(-1)
+        if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
+            setCpuThinking(true)
+            function makeCPUMove(gameState:GameState) {
+                if (gameState && !gameState.isGameOver) {
+                    CPUMove(gameState.board)
+                    setCpuThinking(false)
+                }
             }
+            setTimeout(()=>makeCPUMove(gameState), 250)
         }
-        
-        setTimeout(()=>makeCPUMove(gameState), 250)
     }
 
     return (

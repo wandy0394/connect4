@@ -17,6 +17,8 @@ type GameContextValue = {
     CPUMove: (board:number[][]) => void
     gameMode:GAME_MODE,
     setGameMode: React.Dispatch<React.SetStateAction<GAME_MODE>>
+    cpuThinking:boolean,
+    setCpuThinking:React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export type GameState = {
@@ -50,6 +52,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     })
     const [isGameOver, setIsGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<Player>(Player.NONE)
+    const [cpuThinking, setCpuThinking] = useState<boolean>(false)
 
     function playDisc(board:number[][], column:number, player:Player):GameState {
         if (!isGameOver) {
@@ -98,9 +101,12 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         newScore[candidateWinner as keyof Score] += 1
         setScore(newScore)
         setBoardHistory([INIT_BOARD])
+        setCpuThinking(false)
+
     }
 
     function resetGame(resetScore:boolean) {
+        setCpuThinking(false)
         setBoard(INIT_BOARD)
         setCurrentPlayer(Player.PLAYER1)
         if (resetScore) {
@@ -188,16 +194,14 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             score:SCORE.MIN
         }
         let boardCopy = board.map(c=>[...c])
-        bestMove = findNextMove(boardCopy, 7, CPU_PLAYER, true, SCORE.NEG_INF, SCORE.INF, {column:0, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
+        bestMove = findNextMove(boardCopy, 6, CPU_PLAYER, true, SCORE.NEG_INF, SCORE.INF, {column:0, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
         if (bestMove.column !== undefined) {
-            setTimeout(()=>{
-                if (bestMove.moveType === MOVE_TYPE.PLAY_DISC) {
-                    playDisc(boardCopy, bestMove.column as number, CPU_PLAYER)
-                }
-                else if (bestMove.moveType === MOVE_TYPE.POPOUT) {
-                    popout(bestMove.column as number, boardCopy)
-                }
-            }, 0)
+            if (bestMove.moveType === MOVE_TYPE.PLAY_DISC) {
+                playDisc(boardCopy, bestMove.column as number, CPU_PLAYER)
+            }
+            else if (bestMove.moveType === MOVE_TYPE.POPOUT) {
+                popout(bestMove.column as number, boardCopy)
+            }
         }
     }
 
@@ -217,7 +221,9 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 getTurnNumber,
                 CPUMove,
                 gameMode,
-                setGameMode
+                setGameMode,
+                cpuThinking,
+                setCpuThinking
             }}
         >
             {children}

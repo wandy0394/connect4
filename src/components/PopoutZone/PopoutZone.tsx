@@ -6,7 +6,7 @@ import { GAME_MODE, canPopout } from "../../feature/gameplay/connect4"
 import { PLAYER_COLORS, theme } from "../../theme/theme"
 
 export default function PopoutZone() {
-    const {isGameOver, popout, board, currentPlayer, CPUMove, gameMode} = useGameContext()
+    const {isGameOver, popout, board, currentPlayer, CPUMove, gameMode, setCpuThinking} = useGameContext()
     const [hoveredChevronIndex, setHoveredChevronIndex] = useState<number>(-1)
     const [chevronIsVisible, setChevronIsVisible] = useState<boolean>(false)
 
@@ -19,14 +19,18 @@ export default function PopoutZone() {
         setChevronIsVisible(false)
     }
     function handleChevronClick(index:number) {
-        function makeCPUMove(gameState:GameState) {
-            if (gameState && !gameState.isGameOver && gameMode === GAME_MODE.PLAYER_VS_CPU) {
-                CPUMove(gameState.board)
-            }
-        }
         if (!isGameOver) {
             let gameState:GameState = popout(index, board)
-            setTimeout(()=>makeCPUMove(gameState), 250)
+            if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
+                function makeCPUMove(gameState:GameState) {
+                    if (gameState && !gameState.isGameOver) {
+                        CPUMove(gameState.board)
+                        setCpuThinking(false)
+                    }
+                }
+                setCpuThinking(true)
+                setTimeout(()=>makeCPUMove(gameState), 250)
+            }
         }
     }
 
