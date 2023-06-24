@@ -1,9 +1,10 @@
 import { useGameContext } from "../../context/GameContext"
-import { GAME_MODE, Player } from "../../feature/gameplay/connect4"
+import { GAME_MODE,  Player } from "../../feature/gameplay/connect4"
 import { PLAYER_COLORS, theme } from "../../theme/theme"
 import MenuButton from "../MenuButton/MenuButton"
 import Spinner from "../Spinner/Spinner"
 import styles from './TurnCard.module.css'
+import useCPUFirstMove from "../../hooks/useCPUFirstMove"
 
 export default function TurnCard() {
     const {currentPlayer, winner, resetGame, isGameOver,  undoMove, getTurnNumber, gameMode, cpuThinking} = useGameContext()
@@ -11,6 +12,16 @@ export default function TurnCard() {
         if (!isGameOver) return {backgroundColor:PLAYER_COLORS[currentPlayer]}
         return {backgroundColor:PLAYER_COLORS[winner]}
     }
+    const [_, setStartCPUMove] = useCPUFirstMove({})
+
+
+    function handlePvCReset() {
+      if (winner === Player.PLAYER1) {
+        setStartCPUMove(true)
+      }
+      resetGame(false, Player.PLAYER1)
+    }
+
 
     if (gameMode === GAME_MODE.PLAYER_VS_CPU) return (
       <>
@@ -53,7 +64,7 @@ export default function TurnCard() {
                       : <span>DRAW GAME</span>
                   }
                 </label>
-                <MenuButton label={'PLAY AGAIN'} onClick={()=>resetGame(false, Player.PLAYER1)}/>
+                <MenuButton label={'PLAY AGAIN'} onClick={handlePvCReset}/>
               </div>
             </div>
       }

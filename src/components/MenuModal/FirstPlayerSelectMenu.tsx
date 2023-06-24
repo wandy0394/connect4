@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useGameContext } from '../../context/GameContext'
-import { GAME_MODE, INIT_BOARD, Player } from '../../feature/gameplay/connect4'
-import { theme } from '../../theme/theme'
+import { GAME_MODE,  Player } from '../../feature/gameplay/connect4'
 import styles from './FirstPlayerSelectMenu.module.css'
+import useCPUFirstMove from '../../hooks/useCPUFirstMove'
 
 type Props = {
     handleClose: () => void
@@ -12,9 +12,9 @@ type Props = {
 
 export default function FirstPlayerSelectMenu(props:Props) {
     const {handleClose, handleBack, gameMode} = props
-    const {setGameMode, resetGame, CPUMove, setCpuThinking, isPVCInitialised, board, cpuThinking, isGameOver, winner} = useGameContext()
+    const {setGameMode, resetGame} = useGameContext()
+    const [_, setStartCPUMove] = useCPUFirstMove({callback:handleClose})
     const [firstPlayer, setFirstPlayer] = useState<Player>(Player.PLAYER1)
-    const [startCPUMove, setStartCPUMove] = useState<boolean>(false)
 
     function handleStartClick() {
         setGameMode(gameMode)
@@ -34,20 +34,6 @@ export default function FirstPlayerSelectMenu(props:Props) {
             handleClose()
         }
     }
-
-    useEffect(()=>{
-        //when the CPU is starting to make its first move, check the board is properly initialised
-        if (isPVCInitialised(board, cpuThinking, isGameOver, winner) && startCPUMove) {
-            setCpuThinking(true)
-            function makeCPUMove() {
-                CPUMove(INIT_BOARD, true)
-                setCpuThinking(false)
-                setStartCPUMove(false)
-            }
-            setTimeout(()=>makeCPUMove(), 300)
-            handleClose()
-        }
-    }, [board, cpuThinking, isGameOver, winner, startCPUMove])
 
     return (
         <div className={styles['container']}>
