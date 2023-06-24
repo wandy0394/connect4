@@ -1,4 +1,4 @@
-import { useGameContext } from "../../context/GameContext"
+import { GameState, useGameContext } from "../../context/GameContext"
 import {useState} from 'react'
 import styles from './PopoutZone.module.css'
 import Chevron from "../Chevron/Chevron"
@@ -19,11 +19,14 @@ export default function PopoutZone() {
         setChevronIsVisible(false)
     }
     function handleChevronClick(index:number) {
-        if (!isGameOver) {
-            let newBoard = popout(index, board)
-            if (newBoard && !newBoard.isGameOver && gameMode === GAME_MODE.PLAYER_VS_CPU) {
-                CPUMove(newBoard.board)
+        function makeCPUMove(gameState:GameState) {
+            if (gameState && !gameState.isGameOver && gameMode === GAME_MODE.PLAYER_VS_CPU) {
+                CPUMove(gameState.board)
             }
+        }
+        if (!isGameOver) {
+            let gameState:GameState = popout(index, board)
+            setTimeout(()=>makeCPUMove(gameState), 250)
         }
     }
 

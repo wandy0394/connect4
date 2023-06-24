@@ -1,4 +1,4 @@
-import { useGameContext } from '../../context/GameContext'
+import { GameState, useGameContext } from '../../context/GameContext'
 import { GAME_MODE, getNewDiscRow } from '../../feature/gameplay/connect4'
 import DiscDropZone from '../DiscDropZone/DiscDropZone'
 import GameBoardCell from '../GameBoardCell/GameBoardCell'
@@ -14,6 +14,7 @@ export default function GameBoard() {
     const {board, playDisc, isGameOver, currentPlayer, gameMode, CPUMove} = useGameContext()
     const [animate, setAnimate] = useState<boolean>(false)
     const [selectedColumn, setSelectedColumn] = useState<number>(-1)
+    const [cpuThinking, setCpuThinking] = useState<boolean>(false)
 
     function showDiscCursor(index:number) {
         if (!animate) setSelectedColumn(index)
@@ -23,6 +24,7 @@ export default function GameBoard() {
         if (!animate) setSelectedColumn(-1)
     }
     function handleColumClick(column:number) {
+        if (cpuThinking) return
         let row = getNewDiscRow(board, column)
         //calculate height to drop disc and animation time
         if (row >= 0 && !isGameOver && !animate) {
@@ -44,11 +46,18 @@ export default function GameBoard() {
     }
 
     function resolveAnimation(column:number) {
-        let newBoard = playDisc(board, column, currentPlayer)
+
+        let gameState:GameState = playDisc(board, column, currentPlayer)
         setAnimate(false)
-        if (newBoard && !newBoard.isGameOver && gameMode === GAME_MODE.PLAYER_VS_CPU) {
-            CPUMove(newBoard.board)
+        setCpuThinking(true)
+        function makeCPUMove(gameState:GameState) {
+            if (gameState && !gameState.isGameOver && gameMode === GAME_MODE.PLAYER_VS_CPU) {
+                CPUMove(gameState.board)
+                setCpuThinking(false)
+            }
         }
+        
+        setTimeout(()=>makeCPUMove(gameState), 250)
     }
 
     return (

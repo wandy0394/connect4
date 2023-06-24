@@ -188,7 +188,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             score:SCORE.MIN
         }
         let boardCopy = board.map(c=>[...c])
-        bestMove = findNextMove(boardCopy, 2, CPU_PLAYER, true, SCORE.NEG_INF, SCORE.INF, {column:0, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
+        bestMove = findNextMove(boardCopy, 7, CPU_PLAYER, true, SCORE.NEG_INF, SCORE.INF, {column:0, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
         if (bestMove.column !== undefined) {
             setTimeout(()=>{
                 if (bestMove.moveType === MOVE_TYPE.PLAY_DISC) {
@@ -197,7 +197,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 else if (bestMove.moveType === MOVE_TYPE.POPOUT) {
                     popout(bestMove.column as number, boardCopy)
                 }
-            }, 250)
+            }, 0)
         }
     }
 
