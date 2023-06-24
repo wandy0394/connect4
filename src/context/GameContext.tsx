@@ -1,24 +1,26 @@
 import {createContext, useContext, PropsWithChildren, useState} from 'react'
-import { INIT_BOARD, Player, Score, canPopout, isGameWon, getNewDiscRow, isBoardFull, GAME_MODE } from '../feature/gameplay/connect4'
+import { INIT_BOARD, Player, Score, canPopout, isGameWon, getNewDiscRow, isBoardFull, GAME_MODE, isBoardEmpty } from '../feature/gameplay/connect4'
 import { MOVE_TYPE, Move, SCORE,  findNextMove } from '../feature/cpu-opponent/CPU-player'
 
 type GameContextValue = {
     board:number[][],
     setBoard: React.Dispatch<React.SetStateAction<number[][]>>
     currentPlayer:Player
+    setCurrentPlayer: React.Dispatch<React.SetStateAction<Player>>
     playDisc:(board:number[][], column:number, player:Player) => GameState
     winner:Player 
-    resetGame: (resetScore:boolean)=>void
+    resetGame: (resetScore:boolean, firstPlayer:Player)=>void
     score: Score
     isGameOver:boolean
     popout: (column:number, board:number[][]) => GameState
     undoMove: () => void
     getTurnNumber: () => number
-    CPUMove: (board:number[][]) => void
+    CPUMove: (board:number[][], goingFirst?:boolean) => void
     gameMode:GAME_MODE,
     setGameMode: React.Dispatch<React.SetStateAction<GAME_MODE>>
     cpuThinking:boolean,
     setCpuThinking:React.Dispatch<React.SetStateAction<boolean>>
+    isPVCInitialised(board:number[][], cpuThinking:boolean, isGameOver:boolean, winner:Player): boolean
 }
 
 export type GameState = {
@@ -105,10 +107,10 @@ export function GameProvider({children}:PropsWithChildren<any>) {
 
     }
 
-    function resetGame(resetScore:boolean) {
+    function resetGame(resetScore:boolean, firstPlayer:Player) {
         setCpuThinking(false)
         setBoard(INIT_BOARD)
-        setCurrentPlayer(Player.PLAYER1)
+        setCurrentPlayer(firstPlayer)
         if (resetScore) {
             setScore({
                 [Player.PLAYER1]:0,
@@ -120,6 +122,17 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         setIsGameOver(false)
         setBoardHistory([INIT_BOARD])
     }
+
+    //check if the state is ready for a game of Player vs CPU to start
+    function isPVCInitialised(board:number[][], cpuThinking:boolean, isGameOver:boolean, winner:Player):boolean {
+        if (cpuThinking) return false
+        if (isGameOver) return false
+        if (winner !== Player.NONE) return false 
+        if (!isBoardEmpty(board)) return false
+        return true
+    }
+
+    
 
     function popout(column:number, board:number[][]):GameState {
         if (canPopout(board, column)) {
@@ -185,7 +198,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         }
     }
 
-    function CPUMove(board:number[][]) {
+    function CPUMove(board:number[][], goingFirst?:boolean) {
         if (isGameOver) return
         let CPU_PLAYER = Player.PLAYER2
         let bestMove:Move = {
@@ -194,14 +207,26 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             score:SCORE.MIN
         }
         let boardCopy = board.map(c=>[...c])
-        bestMove = findNextMove(boardCopy, 6, CPU_PLAYER, true, SCORE.NEG_INF, SCORE.INF, {column:0, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
-        if (bestMove.column !== undefined) {
-            if (bestMove.moveType === MOVE_TYPE.PLAY_DISC) {
-                playDisc(boardCopy, bestMove.column as number, CPU_PLAYER)
+        if (!goingFirst) {
+            bestMove = findNextMove(boardCopy, 6, CPU_PLAYER, true, SCORE.NEG_INF, SCORE.INF, {column:0, row:0, moveType:MOVE_TYPE.PLAY_DISC, score:SCORE.MIN})
+            if (bestMove.column !== undefined) {
+                if (bestMove.moveType === MOVE_TYPE.PLAY_DISC) {
+                    playDisc(boardCopy, bestMove.column as number, CPU_PLAYER)
+                }
+                else if (bestMove.moveType === MOVE_TYPE.POPOUT) {
+                    popout(bestMove.column as number, boardCopy)
+                }
             }
-            else if (bestMove.moveType === MOVE_TYPE.POPOUT) {
-                popout(bestMove.column as number, boardCopy)
-            }
+        }
+        else {
+            //if going first, play randomly
+            let randomColumn = Math.floor(Math.random()*boardCopy.length)
+            boardCopy[randomColumn][boardCopy[randomColumn].length - 1] = CPU_PLAYER
+            setBoard(boardCopy)
+            setBoardHistory([
+                ...boardHistory,
+                boardCopy
+            ])
         }
     }
 
@@ -211,6 +236,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 board, 
                 setBoard, 
                 currentPlayer, 
+                setCurrentPlayer,
                 playDisc, 
                 winner, 
                 resetGame, 
@@ -223,7 +249,8 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 gameMode,
                 setGameMode,
                 cpuThinking,
-                setCpuThinking
+                setCpuThinking,
+                isPVCInitialised
             }}
         >
             {children}

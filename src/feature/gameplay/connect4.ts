@@ -148,6 +148,19 @@ export function isBoardFull(board:number[][]):boolean {
     return true
 }
 
+export function isBoardEmpty(board:number[][]):boolean {
+    //look for empty cells
+    
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[i][j] !== Player.NONE) {
+                return false
+            }
+        }
+    }
+    return true
+}
+
 export function canPopout(board:number[][], column:number):boolean {
     let numEmptyCells = 0
     for (let i = 0; i < board[column].length; i++) {
