@@ -7,6 +7,7 @@ export enum Player {
     NONE = 0,
     PLAYER1 = 1,
     PLAYER2 = 2,
+    CPU = 3,
 }
 
 export enum GAME_MODE {
@@ -27,6 +28,7 @@ export const WIN_THRESH = 4
 export type Score = {
     [Player.PLAYER1]:number
     [Player.PLAYER2]:number
+    [Player.CPU]:number
 }
 
 
@@ -38,7 +40,6 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    // console.log('Winner is Player ' + player + ' in column', i+1)
                     return true
                 }
             }
@@ -57,7 +58,6 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    // console.log('Winner is Player ' + player + ' in row', i+1)
                     return true
                 }
             }
@@ -77,7 +77,6 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    // console.log('Winner is Player ' + player + ' in diag', i+1)
                     return true
                 }
             }
@@ -93,7 +92,6 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    // console.log('Winner is Player ' + player + ' in diag', i+1)
                     return true
                 }
             }
@@ -110,7 +108,6 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    // console.log('Winner is Player ' + player + ' in diag', i+1)
                     return true
                 }
             }
@@ -125,7 +122,6 @@ export function isGameWon(board:number[][], player:Player):boolean {
             if (board[i][j] === player) {
                 count++
                 if (count >= WIN_THRESH) {
-                    // console.log('Winner is Player ' + player + ' in diag', i+1)
                     return true
                 }
             }
@@ -140,6 +136,8 @@ export function isGameWon(board:number[][], player:Player):boolean {
 }
 
 export function isBoardFull(board:number[][]):boolean {
+    //look for empty cells
+    
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] === Player.NONE) {
@@ -153,9 +151,7 @@ export function isBoardFull(board:number[][]):boolean {
 export function canPopout(board:number[][], column:number):boolean {
     let numEmptyCells = 0
     for (let i = 0; i < board[column].length; i++) {
-        if (board[column][i] === Player.NONE) {
-            numEmptyCells++
-        }
+        numEmptyCells = board[column].filter(x => x=== Player.NONE).length
     }
     //Popout is a valid move only if the column is at least half full (rounded down)
     if (numEmptyCells <= Math.floor(board[column].length / 2)) return true
@@ -168,6 +164,9 @@ export function getNewDiscRow(board:number[][], column:number):number {
         if (board[column][i] === Player.NONE) {
             targetCell += 1
         }
+        else {
+            break
+        } 
     }
     if (targetCell >= 0 && targetCell < board[column].length) return targetCell
     return -1

@@ -2,7 +2,7 @@ import styles from './App.module.css'
 import MenuBar from './components/MenuBar/MenuBar'
 import Card from './components/Card/Card'
 import GameBoard from './components/GameBoard/GameBoard'
-import  {Player} from './feature/gameplay/connect4'
+import  {GAME_MODE, Player} from './feature/gameplay/connect4'
 import { useGameContext } from './context/GameContext'
 import { theme } from './theme/theme'
 import TurnCard from './components/TurnCard/TurnCard'
@@ -10,7 +10,7 @@ import TurnCard from './components/TurnCard/TurnCard'
 
 
 function App() {
-  const {score} = useGameContext()
+  const {score, gameMode} = useGameContext()
   return (
     <div className={styles['base']}>
       <div className={`${styles['column']} ${styles['column-left']}`}>
@@ -27,7 +27,7 @@ function App() {
         <div style={{height:'10vh'}}></div>
       </div>
       <div className={`${styles['column']} ${styles['column-right']}`}>
-        <Card color={theme.secondaryColor} title='PLAYER 2' score={score[Player.PLAYER2]}/>
+        <Card color={theme.secondaryColor} title={gameMode === GAME_MODE.PLAYER_VS_PLAYER?'PLAYER 2':'CPU'} score={score[Player.PLAYER2]}/>
       </div>
       <TurnCard/>
       <div className={styles["footer"]}></div>
