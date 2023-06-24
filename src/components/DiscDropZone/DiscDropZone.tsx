@@ -1,7 +1,7 @@
 import { useGameContext } from "../../context/GameContext"
 import styles from './DiscDropZone.module.css'
 import ColoredDisc from "../ColoredDisc/ColoredDisc"
-import { COLOR_DICT } from "../../theme/theme"
+import { PLAYER_COLORS } from "../../theme/theme"
 
 type Props = {
     animate:boolean
@@ -36,7 +36,7 @@ export default function DiscDropZone(props:Props) {
                                 `}
                                 onAnimationEnd={()=>resolveAnimation(index)}
                             >
-                                <ColoredDisc color={COLOR_DICT[currentPlayer]} size={100}/>
+                                <ColoredDisc color={PLAYER_COLORS[currentPlayer]} size={100}/>
                             </div>
                         </div>
                     )

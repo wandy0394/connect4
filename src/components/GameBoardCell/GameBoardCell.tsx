@@ -1,5 +1,5 @@
 import { Player } from "../../feature/gameplay/connect4"
-import { COLOR_DICT, EnumDictionary } from "../../theme/theme"
+import { PLAYER_COLORS, EnumDictionary } from "../../theme/theme"
 import ColoredDisc from "../ColoredDisc/ColoredDisc"
 import styles from './GameBoardCell.module.css'
 
@@ -24,7 +24,7 @@ export default function GameBoardCell(props:Props) {
                         zIndex:3,
                     }} 
                     size={100} 
-                    color={COLOR_DICT[cellValue as keyof EnumDictionary<Player, string>]}
+                    color={PLAYER_COLORS[cellValue as keyof EnumDictionary<Player, string>]}
                 />
             </div>
         </div>

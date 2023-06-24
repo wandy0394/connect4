@@ -1,14 +1,14 @@
 import { useGameContext } from "../../context/GameContext"
 import { Player } from "../../feature/gameplay/connect4"
-import { COLOR_DICT } from "../../theme/theme"
+import { PLAYER_COLORS } from "../../theme/theme"
 import MenuButton from "../MenuButton/MenuButton"
 import styles from './TurnCard.module.css'
 
 export default function TurnCard() {
     const {currentPlayer, winner, resetGame, isGameOver,  undoMove, getTurnNumber} = useGameContext()
     function setTurnCardColour() {
-        if (!isGameOver) return {backgroundColor:COLOR_DICT[currentPlayer]}
-        return {backgroundColor:COLOR_DICT[winner]}
+        if (!isGameOver) return {backgroundColor:PLAYER_COLORS[currentPlayer]}
+        return {backgroundColor:PLAYER_COLORS[winner]}
     }
     return (
         <div className={styles["turn-card"]} style={setTurnCardColour()}>

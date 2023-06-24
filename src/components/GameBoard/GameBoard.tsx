@@ -1,5 +1,4 @@
 import { useGameContext } from '../../context/GameContext'
-import { evaluateBoard2 } from '../../feature/cpu-opponent/CPU-player'
 import { GAME_MODE, getNewDiscRow } from '../../feature/gameplay/connect4'
 import DiscDropZone from '../DiscDropZone/DiscDropZone'
 import GameBoardCell from '../GameBoardCell/GameBoardCell'
@@ -25,8 +24,8 @@ export default function GameBoard() {
     }
     function handleColumClick(column:number) {
         let row = getNewDiscRow(board, column)
+        //calculate height to drop disc and animation time
         if (row >= 0 && !isGameOver && !animate) {
-            //calculate height to drop disc and animation time
             let targetRow = document.getElementById(`cell-${column}-${row}`)?.getBoundingClientRect()
             let discHeight = document.getElementById(`drop-disc-zone`)?.getBoundingClientRect()
             //obtain height of bottom row of cells
@@ -47,13 +46,9 @@ export default function GameBoard() {
     function resolveAnimation(column:number) {
         let newBoard = playDisc(board, column, currentPlayer)
         setAnimate(false)
-        setSelectedColumn(-1)
-        if (newBoard) {
+        if (newBoard && !isGameOver) {
             if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
                 CPUMove(newBoard)
-            }
-            else {
-                // console.log(evaluateBoard2(newBoard, currentPlayer))
             }
         }
     }

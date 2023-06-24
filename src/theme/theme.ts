@@ -16,7 +16,7 @@ export type EnumDictionary<T extends string | number, U> = {
     [key in T]:U
 }
 
-export const COLOR_DICT:EnumDictionary<Player, string> = {
+export const PLAYER_COLORS:EnumDictionary<Player, string> = {
     [Player.NONE]: theme.white,
     [Player.PLAYER1]: theme.primaryColor,
     [Player.PLAYER2]: theme.secondaryColor,

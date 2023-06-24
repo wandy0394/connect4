@@ -7,7 +7,6 @@ export enum Player {
     NONE = 0,
     PLAYER1 = 1,
     PLAYER2 = 2,
-    CPU = 3
 }
 
 export enum GAME_MODE {
