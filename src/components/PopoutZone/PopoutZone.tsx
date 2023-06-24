@@ -23,13 +23,15 @@ export default function PopoutZone() {
             let gameState:GameState = popout(index, board)
             if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
                 function makeCPUMove(gameState:GameState) {
-                    if (gameState && !gameState.isGameOver) {
+                    if (gameState) {
                         CPUMove(gameState.board)
-                        setCpuThinking(false)
                     }
+                    setCpuThinking(false)
                 }
-                setCpuThinking(true)
-                setTimeout(()=>makeCPUMove(gameState), 250)
+                if (gameState && !gameState.isGameOver) {
+                    setCpuThinking(true)
+                    setTimeout(()=>makeCPUMove(gameState), 250)
+                }
             }
         }
     }

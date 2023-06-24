@@ -51,14 +51,16 @@ export default function GameBoard() {
         setAnimate(false)
         setSelectedColumn(-1)
         if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
-            setCpuThinking(true)
             function makeCPUMove(gameState:GameState) {
-                if (gameState && !gameState.isGameOver) {
+                if (gameState) {
                     CPUMove(gameState.board)
-                    setCpuThinking(false)
                 }
+                setCpuThinking(false)
             }
-            setTimeout(()=>makeCPUMove(gameState), 250)
+            if (gameState && !gameState.isGameOver) {
+                setCpuThinking(true)
+                setTimeout(()=>makeCPUMove(gameState), 250)
+            }
         }
     }
 
