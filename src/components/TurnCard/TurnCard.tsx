@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useGameContext } from "../../context/GameContext"
 import { GAME_MODE, Player } from "../../feature/gameplay/connect4"
 import { PLAYER_COLORS } from "../../theme/theme"
@@ -10,6 +11,8 @@ export default function TurnCard() {
         if (!isGameOver) return {backgroundColor:PLAYER_COLORS[currentPlayer]}
         return {backgroundColor:PLAYER_COLORS[winner]}
     }
+
+
     return (
         <div className={styles["turn-card"]} style={setTurnCardColour()}>
         {
@@ -25,7 +28,7 @@ export default function TurnCard() {
                 <label className={styles['turn-label']}>
                   {
                     winner !== Player.NONE
-                      ? <span>PLAYER {gameMode===GAME_MODE.PLAYER_VS_PLAYER ? winner : 'CPU'} WINS!</span>
+                      ? <span>PLAYER {(gameMode === GAME_MODE.PLAYER_VS_CPU && winner === Player.PLAYER2) ? 'CPU' : winner} WINS!</span>
                       : <span>DRAW GAME</span>
                   }
                 </label>

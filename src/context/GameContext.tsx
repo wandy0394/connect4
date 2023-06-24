@@ -6,18 +6,23 @@ type GameContextValue = {
     board:number[][],
     setBoard: React.Dispatch<React.SetStateAction<number[][]>>
     currentPlayer:Player
-    playDisc:(board:number[][], column:number, player:Player) => number[][] | null
+    playDisc:(board:number[][], column:number, player:Player) => GameState
     winner:Player 
     resetGame: (resetScore:boolean)=>void
     score: Score
     isGameOver:boolean
-    popout: (column:number, board:number[][]) => number[][]|null
+    popout: (column:number, board:number[][]) => GameState
     undoMove: () => void
     getTurnNumber: () => number
     CPUMove: (board:number[][]) => void
     gameMode:GAME_MODE,
     setGameMode: React.Dispatch<React.SetStateAction<GAME_MODE>>
 }
+
+export type GameState = {
+    board:number[][],
+    isGameOver:boolean
+} | null
 
 export const GameContext = createContext<GameContextValue | undefined>(undefined)
 
@@ -41,11 +46,12 @@ export function GameProvider({children}:PropsWithChildren<any>) {
     const [score, setScore] = useState<Score>({
         [Player.PLAYER1]:0,
         [Player.PLAYER2]:0,
+        [Player.CPU]:0,
     })
     const [isGameOver, setIsGameOver] = useState<boolean>(false)
     const [winner, setWinner] = useState<Player>(Player.NONE)
 
-    function playDisc(board:number[][], column:number, player:Player):number[][] | null {
+    function playDisc(board:number[][], column:number, player:Player):GameState {
         if (!isGameOver) {
             let targetCell:number = getNewDiscRow(board, column)
             if (targetCell > -1) {
@@ -59,18 +65,30 @@ export function GameProvider({children}:PropsWithChildren<any>) {
                 let currentPlayerWon = isGameWon(newBoard, player)
                 if (currentPlayerWon) {
                     endGame(player)
+                    return {
+                        board:newBoard,
+                        isGameOver:true
+                    }
                 }
                 else if (!currentPlayerWon && isBoardFull(newBoard)) {
                     //handle draw
                     endGame(Player.NONE)
+                    return {
+                        board:newBoard,
+                        isGameOver:true
+                    }
                 }
-                else {
-                    nextTurn()
+                nextTurn()
+                return {
+                    board:newBoard,
+                    isGameOver:false
                 }
-                return newBoard
+            }
+            else {
+                //error state, throw exception here
             }
         }
-        return board
+        return null
     }
 
     function endGame(candidateWinner:Player) {
@@ -89,6 +107,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             setScore({
                 [Player.PLAYER1]:0,
                 [Player.PLAYER2]:0,
+                [Player.CPU]:0
             })
         }
         setWinner(Player.NONE)
@@ -96,7 +115,7 @@ export function GameProvider({children}:PropsWithChildren<any>) {
         setBoardHistory([INIT_BOARD])
     }
 
-    function popout(column:number, board:number[][]):number[][] | null {
+    function popout(column:number, board:number[][]):GameState {
         if (canPopout(board, column)) {
 
             const newBoard = board.map(c=>[...c])
@@ -117,14 +136,23 @@ export function GameProvider({children}:PropsWithChildren<any>) {
             if (player1Won && player2Won) {
                 //draw
                 endGame(Player.NONE)
+                return {
+                    board:newBoard,
+                    isGameOver:true
+                }
             }
             else if (player1Won || player2Won) {
                 endGame((player1Won) ? Player.PLAYER1 : Player.PLAYER2)
+                return {
+                    board:newBoard,
+                    isGameOver:true
+                }
             }
-            else {
-                nextTurn()
+            nextTurn()
+            return {
+                board:newBoard,
+                isGameOver:false
             }
-            return newBoard
         }
         return null
     }

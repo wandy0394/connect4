@@ -21,10 +21,8 @@ export default function PopoutZone() {
     function handleChevronClick(index:number) {
         if (!isGameOver) {
             let newBoard = popout(index, board)
-            if (newBoard !== null) {
-                if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
-                    CPUMove(newBoard)
-                }
+            if (newBoard && !newBoard.isGameOver && gameMode === GAME_MODE.PLAYER_VS_CPU) {
+                CPUMove(newBoard.board)
             }
         }
     }

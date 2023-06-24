@@ -17,6 +17,7 @@ export default function MenuModal(props:Props) {
     const {visible, setVisible} = props
     const {setGameMode, resetGame} = useGameContext()
     const [pages, setPages] = useState<PAGES>(PAGES.GAME_MODE)
+    
     function handlePvPClick() {
         resetGame(true)
         setGameMode(GAME_MODE.PLAYER_VS_PLAYER)

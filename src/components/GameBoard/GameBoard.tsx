@@ -46,10 +46,8 @@ export default function GameBoard() {
     function resolveAnimation(column:number) {
         let newBoard = playDisc(board, column, currentPlayer)
         setAnimate(false)
-        if (newBoard && !isGameOver) {
-            if (gameMode === GAME_MODE.PLAYER_VS_CPU) {
-                CPUMove(newBoard)
-            }
+        if (newBoard && !newBoard.isGameOver && gameMode === GAME_MODE.PLAYER_VS_CPU) {
+            CPUMove(newBoard.board)
         }
     }
 
