@@ -91,7 +91,7 @@ export default function TurnCard() {
                           : <span>DRAW GAME</span>
                       }
                     </label>
-                    <MenuButton label={'PLAY AGAIN'} onClick={()=>resetGame(false, winner===Player.PLAYER1?Player.PLAYER2:Player.PLAYER1)}/>
+                    <MenuButton label={'PLAY AGAIN'} onClick={()=>resetGame(false, winner === Player.PLAYER1 ? Player.PLAYER2 : Player.PLAYER1)}/>
                   </div>
             }
           </div>
