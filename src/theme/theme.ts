@@ -20,4 +20,5 @@ export const PLAYER_COLORS:EnumDictionary<Player, string> = {
     [Player.NONE]: theme.white,
     [Player.PLAYER1]: theme.primaryColor,
     [Player.PLAYER2]: theme.secondaryColor,
+    [Player.CPU]:theme.neutralDarkGray
 }

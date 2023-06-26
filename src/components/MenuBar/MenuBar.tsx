@@ -4,12 +4,12 @@ import MenuButton from '../MenuButton/MenuButton'
 import styles from './menuBar.module.css'
 import { useGameContext } from '../../context/GameContext'
 import MenuModal, { PAGES } from '../MenuModal/MenuModal'
-import { GAME_MODE, Player } from '../../feature/gameplay/connect4'
+import { Player } from '../../feature/gameplay/connect4'
 
 export default function MenuBar() {
-    const {resetGame, gameMode} = useGameContext()
+    const {resetGame} = useGameContext()
     const [modalVisible, setModalVisible] = useState<boolean>(false)
-    const [startingPage, setStartingPage] = useState<PAGES>(PAGES.GAME_MODE)
+    const [startingPage, _] = useState<PAGES>(PAGES.GAME_MODE)
     function handleRestartClick() {
         resetGame(true, Player.PLAYER1)
     }
